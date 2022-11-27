@@ -3,24 +3,26 @@
 
 from itertools import product
 
+
 def letters(i):
     match int(i):
         case 2:
-            return 'abc'
+            return "abc"
         case 3:
-            return 'def'
+            return "def"
         case 4:
-            return 'ghi'
+            return "ghi"
         case 5:
-            return 'jkl'
+            return "jkl"
         case 6:
-            return 'mno'
+            return "mno"
         case 7:
-            return 'pqrs'
+            return "pqrs"
         case 8:
-            return 'tuv'
+            return "tuv"
         case 9:
-            return 'wxyz'
+            return "wxyz"
+
 
 def get_combinations(phone_number_str):
     combinations = [""]
@@ -31,6 +33,7 @@ def get_combinations(phone_number_str):
         combinations = new_combinations
     return combinations
 
-s = '23'
+
+s = "23"
 
 print(get_combinations(s))

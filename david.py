@@ -18,10 +18,7 @@ class ListNode:
 
 def show(f):
     def _f(*args):
-        print(f.__name__, *args)
         ret = f(*args)
-        print(f.__name__, *args, "=", ret)
-        print()
         return ret
 
     return _f
@@ -30,6 +27,10 @@ def show(f):
 def is_leaf(node):
     return node.left is None and node.right is None
 
+def assert_null_or_same_type(a, b):
+    if a is None or b is None:
+        return
+    assert type(a) is type(a)
 
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
@@ -44,6 +45,13 @@ class TreeNode:
         rchild = "{" + str(self.right) + "}"
         return f"T({self.val}{lchild}{rchild})"
         # return f"T({self.val}[\{{self.left}\}|\{{self.right}\}])"
+
+    def __eq__(self, other):
+        if other is None:
+            return self is None
+        assert isinstance(other, TreeNode)
+        assert_null_or_same_type(self.val, other.val)
+        return self.val == other.val and self.left == other.left and self.right == other.right
 
     @staticmethod
     def create(vals):
@@ -72,3 +80,11 @@ class Node:
 
     def __repr__(self):
         return f"G({self.val}, {len(self.neighbors)})"
+
+import inspect
+def show_locals(n=1):
+    frame = inspect.currentframe()
+    for i in range(n):
+        frame = frame.f_back
+
+

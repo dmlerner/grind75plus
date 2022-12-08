@@ -88,6 +88,13 @@ def mq2(heights):
         mq.append([i1, i2, h])
     return fsl, fsr, mq
 
+def mq3(heights):
+    mq = []
+    fsl = [None]*len(heights)
+    fsr = [None]*len(heights)
+    for i, h in enumerate(heights):
+        while mq and h <= mq[-1][-1]: # while adding h would break strict monotonicity
+
 def get_fsl(heights):
     fsl = [None]*len(heights)
     for i, h in enumerate(heights):

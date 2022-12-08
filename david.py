@@ -18,7 +18,9 @@ class ListNode:
 
 def show(f):
     def _f(*args):
+        print(f.__name__, *args)
         ret = f(*args)
+        print(f.__name__, *args, ret)
         return ret
 
     return _f
@@ -81,10 +83,22 @@ class Node:
     def __repr__(self):
         return f"G({self.val}, {len(self.neighbors)})"
 
+from functools import wraps
 import inspect
 def show_locals(n=1):
     frame = inspect.currentframe()
     for i in range(n):
         frame = frame.f_back
 
+def recursion_limit(n=10):
+    def decorator(f):
+        count = 0
+        @wraps(f)
+        def _f(*args):
+            nonlocal count
+            assert count < n
+            count += 1
+            return f(*args)
+        return _f
+    return decorator
 

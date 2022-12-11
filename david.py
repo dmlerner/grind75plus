@@ -25,6 +25,16 @@ def show(f):
 
     return _f
 
+def count_calls(f):
+    def _f(*args, **kwargs):
+        _f.call_count += 1
+        return f(*args, **kwargs)
+    _f.call_count = 0
+    def reset_call_count():
+        _f.call_count = 0
+    _f.reset_call_count = reset_call_count
+    return _f
+
 
 def is_leaf(node):
     return node.left is None and node.right is None

@@ -1,12 +1,15 @@
-from david import show
+from david import show, count_calls
+
 class Trie:
     def __init__(self, letter, parent=None):
         self.letter = letter # should not be needed, just for debugging
         self.parent = parent
         self.suffix_by_first = {}
+        self.terminal = False
 
     def add(self, word):
         if not word:
+            self.terminal = True
             return
         first, suffix = word[0], word[1:]
         if first not in self.suffix_by_first:
@@ -36,11 +39,35 @@ class Trie:
 
     def __contains__(self, word):
         if not word:
-            return True
+            return self.terminal
         first, suffix = word[0], word[1:]
         if first not in self.suffix_by_first:
             return False
         return suffix in self.suffix_by_first[first]
+
+    def get_word(self):
+        if self.parent is None:
+            return self.letter
+        return self.parent.get_word() + self.letter
+
+
+    def word_generator(self, prefix_list=None):
+        # yield as a list of characters to avoid mutating strings
+        prefix_list = prefix_list or []
+        for first, suffix in self.suffix_by_first.items():
+            prefix_list.append(first)
+            yield from suffix.word_generator(prefix_list)
+            prefix_list.pop()
+        else:
+            if prefix_list:
+                yield prefix_list
+
+    @count_calls
+    def leaf_generator(self):
+        for first, suffix in self.suffix_by_first.items():
+            if suffix.terminal:
+                yield suffix
+            yield from suffix.leaf_generator()
 
 
 
@@ -75,7 +102,7 @@ def test_build_dictionary():
     assert do_last.parent.parent.parent is None
 
     assert 'hot' in d
-    assert 'ho' in d # assume all words are terminal
+    assert 'ho' not in d
     assert 'o' not in d
 
     print('build_dictionary passes')
@@ -97,6 +124,18 @@ def test_get_neighbors():
     assert get_neighbors('xx', d) == []
     assert get_neighbors('xxxx', d) == []
     print('test_get_neighbors passes')
+
+def test_word_generator():
+    d = build_dictionary(wordList)
+    g = d.word_generator()
+    a = next(g)
+    assert ''.join(a) == 'hot'
+    b = next(g)
+    assert ''.join(a) == 'ho'
+    assert ''.join(b) == 'ho'
+    assert a is b
+    print('test_word_generator passes')
+
 
 def count_neighbors(word, dictionary, max_dist=1):
     if max_dist < 0:
@@ -138,7 +177,38 @@ def get_neighbors(word, dictionary, max_dist=1):
 
     return neighbors
 
+def test_leaf_generator():
+    d = build_dictionary(wordList)
+    g = d.leaf_generator()
+    first = next(g)
+    assert first.get_word() == '^hot'
+    assert first is d.suffix_by_first['h'].suffix_by_first['o'].suffix_by_first['t']
+    second = next(g)
+    assert second.get_word() == '^dot'
+    assert second is d.suffix_by_first['d'].suffix_by_first['o'].suffix_by_first['t']
+    third = next(g)
+    assert third.get_word() == '^dog'
+    assert third is d.suffix_by_first['d'].suffix_by_first['o'].suffix_by_first['g']
+    print('test_leaf_generator passes')
+
+def test_leaf_generator_count():
+    words = ['abcdefg', 'abcdefh']
+    d = build_dictionary(words)
+    d.leaf_generator.reset_call_count()
+    g = d.leaf_generator()
+    first = next(g)
+    assert first.get_word() == '^abcdefg'
+    assert first is d.suffix_by_first['a'].suffix_by_first['b'].suffix_by_first['c'].suffix_by_first['d'].suffix_by_first['e'].suffix_by_first['f'].suffix_by_first['g']
+    second = next(g)
+    assert second is d.suffix_by_first['a'].suffix_by_first['b'].suffix_by_first['c'].suffix_by_first['d'].suffix_by_first['e'].suffix_by_first['f'].suffix_by_first['h']
+    assert first.parent is second.parent
+    assert d.leaf_generator.call_count == len(words[0]) + 1
+    print('test_leaf_generator passes')
+
 wordList = ["hot","dot","dog","lot","log","cog"]
 test_build_dictionary()
 test_count_neighbors()
 test_get_neighbors()
+test_word_generator()
+test_leaf_generator()
+test_leaf_generator_count()

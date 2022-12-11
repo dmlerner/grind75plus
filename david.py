@@ -20,7 +20,7 @@ def show(f):
     def _f(*args):
         print(f.__name__, *args)
         ret = f(*args)
-        print(f.__name__, *args, ret)
+        print(f.__name__, *args, '->', ret)
         return ret
 
     return _f

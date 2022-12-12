@@ -1,4 +1,5 @@
 from david import show, count_calls
+from collections import deque, defaultdict
 
 class Trie:
     def __hash__(self):
@@ -80,68 +81,6 @@ def build_dictionary(words):
         dictionary.add(word)
     return dictionary
 
-def test_build_dictionary():
-    d = build_dictionary(wordList)
-
-    assert d.letter == '^'
-
-    s = str(d)
-    assert s == '^[h[o[t]],d[o[t,g]],l[o[t,g]],c[o[g]]]'
-
-    h_last = d.get_last('h')
-    assert h_last
-    assert h_last.letter == 'h'
-    assert len(h_last) == 1
-    print()
-
-    do_last = d.get_last('do')
-    assert do_last
-    assert do_last.letter == 'o'
-    assert len(do_last) == 2
-    print()
-    assert do_last.parent is d.get_last('d')
-    assert do_last.parent.letter == 'd'
-    assert do_last.parent.parent.letter == '^'
-    assert do_last.parent.parent.parent is None
-
-    assert 'hot' in d
-    assert 'ho' not in d
-    assert 'o' not in d
-
-    print('build_dictionary passes')
-    print()
-
-def test_count_neighbors():
-    d = build_dictionary(wordList)
-    assert count_neighbors('hat', d) == 1
-    assert count_neighbors('hot', d) == 2 # dot, lot; NOT hot
-    assert count_neighbors('xxx', d) == 0
-    assert count_neighbors('xx', d) == 0
-    assert count_neighbors('xxxx', d) == 0
-    print('test_count_neighbors passes')
-    print()
-
-def test_get_neighbors():
-    d = build_dictionary(wordList)
-    assert get_neighbors('hat', d) == ['hot']
-    assert get_neighbors('hot', d) == ['dot', 'lot']
-    assert get_neighbors('xxx', d) == []
-    assert get_neighbors('xx', d) == []
-    assert get_neighbors('xxxx', d) == []
-    print('test_get_neighbors passes')
-    print()
-
-def test_word_generator():
-    d = build_dictionary(wordList)
-    g = d.word_generator()
-    a = next(g)
-    assert ''.join(a) == 'hot'
-    b = next(g)
-    assert ''.join(a) == 'ho'
-    assert ''.join(b) == 'ho'
-    assert a is b
-    print('test_word_generator passes')
-    print()
 
 
 def count_neighbors(word, dictionary, max_dist=1):
@@ -185,7 +124,7 @@ def get_neighbors(word, dictionary, max_dist=1):
 
     return neighbors
 
-@show
+# @show
 def neighbor_generator(word, dictionary, max_dist=1):
     assert isinstance(word, str)
     assert isinstance(dictionary, Trie)
@@ -206,6 +145,94 @@ def neighbor_generator(word, dictionary, max_dist=1):
             subproblem_max_dist -= 1
         yield from neighbor_generator(suffix, child, subproblem_max_dist)
 
+# @show
+def bfs_generator(word, dictionary):
+    assert isinstance(word, str)
+    frontier = deque([word])
+    dist_by_word = {word: 1} # problem wants node count, not edge
+    visited = set()
+    while frontier:
+        active = frontier.popleft()
+        assert isinstance(active, str)
+        # TODO: optimize out the get_word
+        for neighbor in neighbor_generator(active, dictionary):
+            assert isinstance(neighbor, Trie)
+            assert neighbor is not None
+            if neighbor not in visited:
+                neighbor_word = neighbor.get_word()
+                dist_by_word[neighbor_word] = dist_by_word[active] + 1
+                visited.add(neighbor)
+                yield dist_by_word[neighbor_word], neighbor
+                frontier.append(neighbor_word)
+
+def ladder_length(start, end, word_list):
+    d = build_dictionary(word_list)
+    target_node = d.get_last(end)
+    for (dist, last_word_node) in bfs_generator(start, d):
+        if last_word_node is target_node:
+            return dist
+    return -1
+
+def test_build_dictionary():
+    d = build_dictionary(wordList)
+
+    assert d.letter == '^'
+
+    s = str(d)
+    assert s == '^[h[o[t]],d[o[t,g]],l[o[t,g]],c[o[g]]]'
+
+    h_last = d.get_last('h')
+    assert h_last
+    assert h_last.letter == 'h'
+    assert len(h_last) == 1
+
+    do_last = d.get_last('do')
+    assert do_last
+    assert do_last.letter == 'o'
+    assert len(do_last) == 2
+    assert do_last.parent is d.get_last('d')
+    assert do_last.parent.letter == 'd'
+    assert do_last.parent.parent.letter == '^'
+    assert do_last.parent.parent.parent is None
+
+    assert 'hot' in d
+    assert 'ho' not in d
+    assert 'o' not in d
+
+    print('build_dictionary passes')
+    print()
+
+def test_count_neighbors():
+    d = build_dictionary(wordList)
+    assert count_neighbors('hat', d) == 1
+    assert count_neighbors('hot', d) == 2 # dot, lot; NOT hot
+    assert count_neighbors('xxx', d) == 0
+    assert count_neighbors('xx', d) == 0
+    assert count_neighbors('xxxx', d) == 0
+    print('test_count_neighbors passes')
+    print()
+
+def test_get_neighbors():
+    d = build_dictionary(wordList)
+    assert get_neighbors('hat', d) == ['hot']
+    assert get_neighbors('hot', d) == ['dot', 'lot']
+    assert get_neighbors('xxx', d) == []
+    assert get_neighbors('xx', d) == []
+    assert get_neighbors('xxxx', d) == []
+    print('test_get_neighbors passes')
+    print()
+
+def test_word_generator():
+    d = build_dictionary(wordList)
+    g = d.word_generator()
+    a = next(g)
+    assert ''.join(a) == 'hot'
+    b = next(g)
+    assert ''.join(a) == 'ho'
+    assert ''.join(b) == 'ho'
+    assert a is b
+    print('test_word_generator passes')
+    print()
 
 def test_leaf_generator():
     d = build_dictionary(wordList)
@@ -251,26 +278,6 @@ def test_neighbor_generator():
     print('test_neigbhor_generator passes')
     print()
 
-from collections import deque, defaultdict
-@show
-def bfs_generator(word, dictionary):
-    assert isinstance(word, str)
-    frontier = deque([word])
-    dist_by_word = {word: 1} # problem wants node count, not edge
-    visited = set()
-    while frontier:
-        active = frontier.popleft()
-        assert isinstance(active, str)
-        # TODO: optimize out the get_word
-        for neighbor in neighbor_generator(active, dictionary):
-            assert isinstance(neighbor, Trie)
-            assert neighbor is not None
-            if neighbor not in visited:
-                neighbor_word = neighbor.get_word()
-                dist_by_word[neighbor_word] = dist_by_word[active] + 1
-                visited.add(neighbor)
-                yield dist_by_word[neighbor_word], neighbor
-                frontier.append(neighbor_word)
 
 def test_bfs_generator():
     d = build_dictionary(wordList)
@@ -280,22 +287,11 @@ def test_bfs_generator():
     assert first[1].get_word() == 'hot'
     assert first[1] is d.suffix_by_first['h'].suffix_by_first['o'].suffix_by_first['t']
     second = next(g)
-    print(second)
     assert second[0] == 3
     assert second[1].get_word() == 'dot'
     assert second[1] is d.suffix_by_first['d'].suffix_by_first['o'].suffix_by_first['t']
     print('test_bfs_generator passes')
     print()
-
-def ladder_length(start, end, word_list):
-    d = build_dictionary(word_list)
-    target_node = d.get_last(end)
-    print(target_node, target_node.get_word())
-    for (dist, last_word_node) in bfs_generator(start, d):
-        print(last_word_node, last_word_node.get_word())
-        if last_word_node is target_node:
-            return dist
-    return -1
 
 def test_ladder_length():
     length = ladder_length("hit", "cog", wordList)
@@ -304,12 +300,12 @@ def test_ladder_length():
 
 
 wordList = ["hot","dot","dog","lot","log","cog"]
-# test_build_dictionary()
-# test_count_neighbors()
-# test_get_neighbors()
-# test_word_generator()
-# test_leaf_generator()
-# test_leaf_generator_count()
-# test_neighbor_generator()
+test_build_dictionary()
+test_count_neighbors()
+test_get_neighbors()
+test_word_generator()
+test_leaf_generator()
+test_leaf_generator_count()
+test_neighbor_generator()
 test_bfs_generator()
 test_ladder_length()

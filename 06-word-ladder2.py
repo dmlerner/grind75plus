@@ -50,7 +50,7 @@ class Trie:
 
     def get_word(self):
         if self.parent is None:
-            return self.letter
+            return ''
         return self.parent.get_word() + self.letter
 
 
@@ -159,6 +159,7 @@ def count_neighbors(word, dictionary, max_dist=1):
     return count
 
 def get_neighbors(word, dictionary, max_dist=1):
+    ''' inefficient but I believe working '''
     if max_dist < 0:
         return []
     if max_dist == 0:
@@ -180,54 +181,39 @@ def get_neighbors(word, dictionary, max_dist=1):
 
     return neighbors
 
+@show
 def neighbor_generator(word, dictionary, max_dist=1):
-    # TODO: really need word to be the last node of the neighbor
-    # don't know the whole string when iterating
-    # may need something like leaf_generator
-    # but with `if suffix.terminal` changed to uhhhh
-    # stopping earlier somehow?
-    # hm, well, is it just:
-    # yield from dictionary.get_last(prefix).leaf_generator()
-    # I still want to not get_last(word[:w+1]) inefficiently
-    # having just done get_last(word[:w])
-    # so I do need a stopping earlier twist
-    # walk dog?
-    # raining for another hour...
-    # assert max_dist >= 0
     assert isinstance(word, str)
     assert isinstance(dictionary, Trie)
-    if max_dist < 0:
-        # TODO: yield?
-        return
     if max_dist == 0:
-        yield dictionary.get_last(word)
+        last_word = dictionary.get_last(word)
+        if last_word is not None:
+            yield last_word
         return
 
-    # TODO:  avoid string slicing
+    # TODO:  avoid string slicing; use iter(word)?
     suffix = word[1:]
     for first, child in dictionary.suffix_by_first.items():
         subproblem_max_dist = max_dist
         if first != word[0]:
+            # I would think this would let me lose the 'return' above...
+            # if max_dist == 0:
+            #     continue
             subproblem_max_dist -= 1
-        # TODO: need filter?
-        uhhh = neighbor_generator(suffix, child, subproblem_max_dist)
-        yield from uhhh
-        # yield from filter(lambda x: x is not None, uhhh)
+        yield from neighbor_generator(suffix, child, subproblem_max_dist)
 
-        # elif max_dist > 0:
-        #     yield from filter(bool, child.get_last(suffix), max_dist-1)
 
 def test_leaf_generator():
     d = build_dictionary(wordList)
     g = d.leaf_generator()
     first = next(g)
-    assert first.get_word() == '^hot'
+    assert first.get_word() == 'hot'
     assert first is d.suffix_by_first['h'].suffix_by_first['o'].suffix_by_first['t']
     second = next(g)
-    assert second.get_word() == '^dot'
+    assert second.get_word() == 'dot'
     assert second is d.suffix_by_first['d'].suffix_by_first['o'].suffix_by_first['t']
     third = next(g)
-    assert third.get_word() == '^dog'
+    assert third.get_word() == 'dog'
     assert third is d.suffix_by_first['d'].suffix_by_first['o'].suffix_by_first['g']
     print('test_leaf_generator passes')
 
@@ -237,7 +223,7 @@ def test_leaf_generator_count():
     d.leaf_generator.reset_call_count()
     g = d.leaf_generator()
     first = next(g)
-    assert first.get_word() == '^abcdefg'
+    assert first.get_word() == 'abcdefg'
     assert first is d.suffix_by_first['a'].suffix_by_first['b'].suffix_by_first['c'].suffix_by_first['d'].suffix_by_first['e'].suffix_by_first['f'].suffix_by_first['g']
     second = next(g)
     assert second is d.suffix_by_first['a'].suffix_by_first['b'].suffix_by_first['c'].suffix_by_first['d'].suffix_by_first['e'].suffix_by_first['f'].suffix_by_first['h']
@@ -249,53 +235,61 @@ def test_neighbor_generator():
     d = build_dictionary(wordList)
     g = neighbor_generator("hat", d, 1)
     first = next(g)
-    assert first.get_word() == '^hot'
+    assert first.get_word() == 'hot'
     assert first is d.suffix_by_first['h'].suffix_by_first['o'].suffix_by_first['t']
     try:
         second = next(g)
-    except:
         assert False
-    # assert second.get_word() == '^dot'
-    # assert second is d.suffix_by_first['d'].suffix_by_first['o'].suffix_by_first['t']
-    # third = next(g)
-    # assert third.get_word() == '^dog'
-    # assert third is d.suffix_by_first['d'].suffix_by_first['o'].suffix_by_first['g']
+    except StopIteration:
+        pass
     print('test_neigbhor_generator passes')
 
 from collections import deque
+@show
 def bfs_generator(word, dictionary):
-    frontier = deque([dictionary])
+    assert isinstance(word, str)
+    frontier = deque([word])
     # TODO: hacky.
-    dictionary.dist = 0
+    # dictionary.dist = 0
     visited = set()
     while frontier:
         active = frontier.popleft()
+        assert isinstance(active, str)
         # TODO: optimize out the get_word
-        for neighbor in neighbor_generator(active.get_word(), active):
+        for neighbor in neighbor_generator(active, dictionary):
+            print('neighbor', neighbor)
+            assert neighbor is not None
             if neighbor not in visited:
-                neighbor.dist = active.dist + 1
+                # neighbor.dist = active.dist + 1
                 visited.add(neighbor)
                 yield neighbor
+                frontier.append(neighbor.get_word())
 
 def test_bfs_generator():
     d = build_dictionary(wordList)
     g = bfs_generator("hat", d)
     first = next(g)
-    assert first is d.suffix_by_first['h']
-    print(first.get_word())
-    assert first.get_word() == '^h'
+    assert first.get_word() == 'hot'
+    assert first is d.suffix_by_first['h'].suffix_by_first['o'].suffix_by_first['t']
+    second = next(g)
+    assert second.get_word() == 'dot'
+    assert second is d.suffix_by_first['d'].suffix_by_first['o'].suffix_by_first['t']
     print('test_bfs_generator passes')
 
 def ladder_length(start, end, word_list):
     d = build_dictionary(word_list)
     target_node = d.get_last(end)
+    print(target_node, target_node.get_word())
     for last_word_node in bfs_generator(start, d):
-        if last_word_node is end:
+        print(last_word_node, last_word_node.get_word())
+        if last_word_node is target_node:
             return last_word_node.dist
     return -1
 
 def test_ladder_length():
-    print('!', ladder_length("hat", "hot", wordList))
+    length = ladder_length("hat", "hot", wordList)
+    print('!', length)
+    assert length == 5
 
 
 wordList = ["hot","dot","dog","lot","log","cog"]
@@ -305,6 +299,6 @@ wordList = ["hot","dot","dog","lot","log","cog"]
 # test_word_generator()
 # test_leaf_generator()
 # test_leaf_generator_count()
-# test_neighbor_generator()
+test_neighbor_generator()
 test_bfs_generator()
 # test_ladder_length()

@@ -66,7 +66,7 @@ class Trie:
             if prefix_list:
                 yield prefix_list
 
-    @count_calls
+    # @count_calls
     def leaf_generator(self):
         for first, suffix in self.suffix_by_first.items():
             if suffix.terminal:
@@ -173,7 +173,7 @@ def ladder_length(start, end, word_list):
     for (dist, last_word_node) in bfs_generator(start, d):
         if last_word_node is target_node:
             return dist
-    return -1
+    return 0
 
 
 def test_build_dictionary():

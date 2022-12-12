@@ -1,6 +1,9 @@
 from david import show, count_calls
 
 class Trie:
+    def __hash__(self):
+        return hash(id(self))
+
     def __init__(self, letter, parent=None):
         self.letter = letter # should not be needed, just for debugging
         self.parent = parent
@@ -177,6 +180,43 @@ def get_neighbors(word, dictionary, max_dist=1):
 
     return neighbors
 
+def neighbor_generator(word, dictionary, max_dist=1):
+    # TODO: really need word to be the last node of the neighbor
+    # don't know the whole string when iterating
+    # may need something like leaf_generator
+    # but with `if suffix.terminal` changed to uhhhh
+    # stopping earlier somehow?
+    # hm, well, is it just:
+    # yield from dictionary.get_last(prefix).leaf_generator()
+    # I still want to not get_last(word[:w+1]) inefficiently
+    # having just done get_last(word[:w])
+    # so I do need a stopping earlier twist
+    # walk dog?
+    # raining for another hour...
+    # assert max_dist >= 0
+    assert isinstance(word, str)
+    assert isinstance(dictionary, Trie)
+    if max_dist < 0:
+        # TODO: yield?
+        return
+    if max_dist == 0:
+        yield dictionary.get_last(word)
+        return
+
+    # TODO:  avoid string slicing
+    suffix = word[1:]
+    for first, child in dictionary.suffix_by_first.items():
+        subproblem_max_dist = max_dist
+        if first != word[0]:
+            subproblem_max_dist -= 1
+        # TODO: need filter?
+        uhhh = neighbor_generator(suffix, child, subproblem_max_dist)
+        yield from uhhh
+        # yield from filter(lambda x: x is not None, uhhh)
+
+        # elif max_dist > 0:
+        #     yield from filter(bool, child.get_last(suffix), max_dist-1)
+
 def test_leaf_generator():
     d = build_dictionary(wordList)
     g = d.leaf_generator()
@@ -205,10 +245,66 @@ def test_leaf_generator_count():
     assert d.leaf_generator.call_count == len(words[0]) + 1
     print('test_leaf_generator passes')
 
+def test_neighbor_generator():
+    d = build_dictionary(wordList)
+    g = neighbor_generator("hat", d, 1)
+    first = next(g)
+    assert first.get_word() == '^hot'
+    assert first is d.suffix_by_first['h'].suffix_by_first['o'].suffix_by_first['t']
+    try:
+        second = next(g)
+    except:
+        assert False
+    # assert second.get_word() == '^dot'
+    # assert second is d.suffix_by_first['d'].suffix_by_first['o'].suffix_by_first['t']
+    # third = next(g)
+    # assert third.get_word() == '^dog'
+    # assert third is d.suffix_by_first['d'].suffix_by_first['o'].suffix_by_first['g']
+    print('test_neigbhor_generator passes')
+
+from collections import deque
+def bfs_generator(word, dictionary):
+    frontier = deque([dictionary])
+    # TODO: hacky.
+    dictionary.dist = 0
+    visited = set()
+    while frontier:
+        active = frontier.popleft()
+        # TODO: optimize out the get_word
+        for neighbor in neighbor_generator(active.get_word(), active):
+            if neighbor not in visited:
+                neighbor.dist = active.dist + 1
+                visited.add(neighbor)
+                yield neighbor
+
+def test_bfs_generator():
+    d = build_dictionary(wordList)
+    g = bfs_generator("hat", d)
+    first = next(g)
+    assert first is d.suffix_by_first['h']
+    print(first.get_word())
+    assert first.get_word() == '^h'
+    print('test_bfs_generator passes')
+
+def ladder_length(start, end, word_list):
+    d = build_dictionary(word_list)
+    target_node = d.get_last(end)
+    for last_word_node in bfs_generator(start, d):
+        if last_word_node is end:
+            return last_word_node.dist
+    return -1
+
+def test_ladder_length():
+    print('!', ladder_length("hat", "hot", wordList))
+
+
 wordList = ["hot","dot","dog","lot","log","cog"]
-test_build_dictionary()
-test_count_neighbors()
-test_get_neighbors()
-test_word_generator()
-test_leaf_generator()
-test_leaf_generator_count()
+# test_build_dictionary()
+# test_count_neighbors()
+# test_get_neighbors()
+# test_word_generator()
+# test_leaf_generator()
+# test_leaf_generator_count()
+# test_neighbor_generator()
+test_bfs_generator()
+# test_ladder_length()

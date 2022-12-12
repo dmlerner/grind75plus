@@ -17,10 +17,10 @@ class ListNode:
 
 
 def show(f):
-    def _f(*args):
-        print(f.__name__, *args)
-        ret = f(*args)
-        print(f.__name__, *args, '->', ret)
+    def _f(*args, **kwargs):
+        print(f.__name__, *args, *kwargs.items())
+        ret = f(*args, **kwargs)
+        print(f.__name__, *args, *kwargs.items(), '->', ret)
         return ret
 
     return _f

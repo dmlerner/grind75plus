@@ -20,7 +20,7 @@ class Trie:
             self.suffix_by_first[first] = Trie(first, self)
         self.suffix_by_first[first].add(word, i+1)
 
-    @show
+    # @show
     def get_last(self, word, i=0):
         """ returns the Trie (rooted at self) whose letter is word[-1] """
         if i >= len(word):
@@ -41,11 +41,11 @@ class Trie:
         children = "[" + ",".join(map(str, self)) + "]" if len(self) else ""
         return self.letter + children
 
-    @show
+    # @show
     def __contains__(self, word):
         return self._contains(word, 0)
 
-    @show
+    # @show
     def _contains(self, word, i):
         if i >= len(word):
             return self.terminal
@@ -71,7 +71,7 @@ class Trie:
             if prefix_list:
                 yield prefix_list
 
-    @count_calls
+    # @count_calls
     def leaf_generator(self):
         for first, suffix in self.suffix_by_first.items():
             if suffix.terminal:
@@ -131,7 +131,7 @@ def get_neighbors(word, dictionary, max_dist=1):
     return neighbors
 
 
-@show
+# @show
 def neighbor_generator(word, dictionary, max_dist=1, i=0):
     assert isinstance(word, str)
     assert isinstance(dictionary, Trie)
@@ -145,13 +145,10 @@ def neighbor_generator(word, dictionary, max_dist=1, i=0):
         if last_word is not None:
             yield last_word
         return
-    print(f'{max_dist =}')
     assert max_dist > 0
 
     ofirst = word[i]
         # ofirst, suffix = next(word), word
-        # print(f'{ofirst =}')
-        # print('suffix',end='= ')
         # suffix = showiter(suffix)
     # except StopIteration:
         # assert False
@@ -160,8 +157,6 @@ def neighbor_generator(word, dictionary, max_dist=1, i=0):
     # # TODO:  avoid string slicing; use iter(word)?
     # suffix = word[1:]
     for first, child in dictionary.suffix_by_first.items():
-        print(f'{first =}')
-        print(f'{child =}')
         # breakpoint()
         subproblem_max_dist = max_dist
         if first != ofirst:
@@ -179,9 +174,7 @@ def bfs_generator(word, dictionary):
     dist_by_word = {word: 1}  # problem wants node count, not edge
     visited = set()
     while frontier:
-        print('!frontier=', frontier)
         active = frontier.popleft()
-        print('!active=', active)
         assert isinstance(active, str)
         # TODO: optimize out the get_word
         for neighbor in neighbor_generator(active, dictionary):
@@ -189,22 +182,16 @@ def bfs_generator(word, dictionary):
             assert neighbor is not None
             if neighbor not in visited:
                 neighbor_word = neighbor.get_word()
-                print(f'{neighbor_word =}')
                 dist_by_word[neighbor_word] = dist_by_word[active] + 1
-                print('!', f'{dist_by_word=}')
                 visited.add(neighbor)
                 yield dist_by_word[neighbor_word], neighbor
                 frontier.append(neighbor_word)
-            else:
-                print('!aready visited=', neighbor, neighbor.get_word())
 
 
 def ladder_length(start, end, word_list):
     d = build_dictionary(word_list)
     target_node = d.get_last(end)
-    print(f'{target_node.get_word() =}')
     for (dist, last_word_node) in bfs_generator(start, d):
-        print('!!', dist, last_word_node.get_word())
         if last_word_node is target_node:
             return dist
     return 0

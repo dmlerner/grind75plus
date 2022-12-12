@@ -55,10 +55,15 @@ class Trie:
         return self.suffix_by_first[first]._contains(word, i+1)
 
     def get_word(self):
+        return ''.join(self._get_word())
+
+    def _get_word(self):
         # TODO: avoid quadratic
         if self.parent is None:
-            return ""
-        return self.parent.get_word() + self.letter
+            yield ""
+            return
+        yield from self.parent.get_word()
+        yield self.letter
 
     def word_generator(self, prefix_list=None):
         # yield as a list of characters to avoid mutating strings
@@ -114,8 +119,6 @@ def get_neighbors(word, dictionary, max_dist=1):
 
 # @show
 def neighbor_generator(word, dictionary, max_dist=1, i=0):
-    assert isinstance(word, str)
-    assert isinstance(dictionary, Trie)
     if max_dist == 0:
         last_word = dictionary.get_last(word, i)
         if last_word is not None:
@@ -123,13 +126,11 @@ def neighbor_generator(word, dictionary, max_dist=1, i=0):
         return
     if i >= len(word):
         return
-    assert max_dist > 0
 
     ofirst = word[i]
         # ofirst, suffix = next(word), word
         # suffix = showiter(suffix)
     # except StopIteration:
-        # assert False
         # return
 
     # # TODO:  avoid string slicing; use iter(word)?
@@ -147,19 +148,15 @@ def neighbor_generator(word, dictionary, max_dist=1, i=0):
 
 # @show
 def bfs_generator(word, dictionary):
-    assert isinstance(word, str)
     frontier = deque([word])
     dist_by_word = {word: 1}  # problem wants node count, not edge
     visited = set()
     while frontier:
         active = frontier.popleft()
-        assert isinstance(active, str)
         # TODO: optimize out the get_word
         for neighbor in neighbor_generator(active, dictionary):
-            assert isinstance(neighbor, Trie)
-            assert neighbor is not None
             if neighbor not in visited:
-                neighbor_word = neighbor.get_word()
+                neighbor_word = str(neighbor.get_word())
                 dist_by_word[neighbor_word] = dist_by_word[active] + 1
                 visited.add(neighbor)
                 yield dist_by_word[neighbor_word], neighbor
@@ -295,7 +292,6 @@ def test_neighbor_generator2():
     d = build_dictionary(wordList)
     g = neighbor_generator('dot', d, 1)
     neighbors = {n.get_word() for n in g}
-    print(neighbors)
     assert neighbors == {'hot', 'lot', 'dog'}
     print("test_neigbhor_generator2 passes")
     print()
@@ -318,8 +314,19 @@ def test_bfs_generator():
 
 def test_ladder_length():
     length = ladder_length("hit", "cog", wordList)
-    print("!", length)
-    # assert length == 5
+    assert length == 5
+
+def test_large():
+    with open('./words_alpha.txt') as f:
+        words = f.readlines()
+    n = 6
+    same_length_words = list(filter(lambda x: len(x) == n, words))
+    import random
+    a, b = random.choice(same_length_words), random.choice(same_length_words)
+    a,b='artar', 'oinks'
+    print(a, b, ladder_length(a, b, same_length_words))
+
+
 
 
 wordList = ["hot", "dot", "dog", "lot", "log", "cog"]
@@ -333,3 +340,5 @@ test_neighbor_generator()
 test_neighbor_generator2()
 test_bfs_generator()
 test_ladder_length()
+# test_large()
+

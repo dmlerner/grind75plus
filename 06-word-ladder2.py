@@ -1,12 +1,5 @@
 from david import show, count_calls
 from collections import deque, defaultdict
-from itertools import tee
-
-def showiter(i):
-    a,b = tee(i)
-    print('!', ''.join(map(str, b)))
-    return a
-
 
 class Trie:
     def __hash__(self):
@@ -18,34 +11,25 @@ class Trie:
         self.suffix_by_first = {}
         self.terminal = False
 
-    def add(self, word):
-        self._add(iter(word))
-
-    def _add(self, word):
-        try:
-            first, suffix = next(word), word
-        except StopIteration:
+    def add(self, word, i=0):
+        if i >= len(word):
             self.terminal = True
             return
+        first = word[i]
         if first not in self.suffix_by_first:
             self.suffix_by_first[first] = Trie(first, self)
-        self.suffix_by_first[first].add(suffix)
+        self.suffix_by_first[first].add(word, i+1)
 
     @show
-    def get_last(self, word):
+    def get_last(self, word, i=0):
         """ returns the Trie (rooted at self) whose letter is word[-1] """
-        return self._get_last(iter(word))
-    @show
-    def _get_last(self, word):
-        word = showiter(word)
-        try:
-            first, suffix = next(word), word
-        except StopIteration:
+        if i >= len(word):
             return self
+        first = word[i]
 
         if first not in self.suffix_by_first:
             return
-        return self.suffix_by_first[first]._get_last(suffix)
+        return self.suffix_by_first[first].get_last(word, i+1)
 
     def __iter__(self):
         yield from self.suffix_by_first.values()
@@ -57,17 +41,18 @@ class Trie:
         children = "[" + ",".join(map(str, self)) + "]" if len(self) else ""
         return self.letter + children
 
+    @show
     def __contains__(self, word):
-        return self._contains(iter(word))
+        return self._contains(word, 0)
 
-    def _contains(self, word):
-        try:
-            first, suffix = next(word), word
-        except StopIteration:
+    @show
+    def _contains(self, word, i):
+        if i >= len(word):
             return self.terminal
+        first = word[i]
         if first not in self.suffix_by_first:
             return False
-        return suffix in self.suffix_by_first[first]
+        return self.suffix_by_first[first]._contains(word, i+1)
 
     def get_word(self):
         # TODO: avoid quadratic
@@ -147,29 +132,28 @@ def get_neighbors(word, dictionary, max_dist=1):
 
 
 @show
-def neighbor_generator(word, dictionary, max_dist=1):
+def neighbor_generator(word, dictionary, max_dist=1, i=0):
     assert isinstance(word, str)
-    return _neighbor_generator(iter(word), dictionary, max_dist)
-@show
-def _neighbor_generator(word, dictionary, max_dist):
     assert isinstance(dictionary, Trie)
-    word = showiter(word)
+    if i >= len(word):
+        # assert False # ?
+        return
     if max_dist == 0:
-        last_word = dictionary._get_last(word)
+        last_word = dictionary.get_last(word, i)
         if last_word is not None:
             yield last_word
         return
     print(f'{max_dist =}')
     assert max_dist > 0
 
-    try:
-        ofirst, suffix = next(word), word
-        print(f'{ofirst =}')
-        print('suffix',end='= ')
-        suffix = showiter(suffix)
-    except StopIteration:
-        assert False
-        return
+    ofirst = word[i]
+        # ofirst, suffix = next(word), word
+        # print(f'{ofirst =}')
+        # print('suffix',end='= ')
+        # suffix = showiter(suffix)
+    # except StopIteration:
+        # assert False
+        # return
 
     # # TODO:  avoid string slicing; use iter(word)?
     # suffix = word[1:]
@@ -183,7 +167,7 @@ def _neighbor_generator(word, dictionary, max_dist):
             #     continue
             subproblem_max_dist -= 1
         # BUG: I reuse suffix iterator!
-        yield from _neighbor_generator(suffix, child, subproblem_max_dist)
+        yield from neighbor_generator(word, child, subproblem_max_dist, i+1)
 
 
 # @show
@@ -237,12 +221,17 @@ def test_build_dictionary():
     assert do_last.parent.letter == "d"
     assert do_last.parent.parent.letter == "^"
     assert do_last.parent.parent.parent is None
+    print("test_build_dictionary passes")
+    print()
+
+def test_contains():
+    d = build_dictionary(wordList)
 
     assert "hot" in d
     assert "ho" not in d
     assert "o" not in d
 
-    print("build_dictionary passes")
+    print("test_contains passes")
     print()
 
 
@@ -381,13 +370,14 @@ def test_ladder_length():
 
 
 wordList = ["hot", "dot", "dog", "lot", "log", "cog"]
-# test_build_dictionary()
-# test_count_neighbors()
-# test_get_neighbors()
-# test_word_generator()
-# test_leaf_generator()
-# test_leaf_generator_count()
-# test_get_last()
+test_build_dictionary()
+test_contains()
+test_count_neighbors()
+test_get_neighbors()
+test_word_generator()
+test_leaf_generator()
+test_leaf_generator_count()
+test_get_last()
 test_neighbor_generator()
-# test_bfs_generator()
-# test_ladder_length()
+test_bfs_generator()
+test_ladder_length()

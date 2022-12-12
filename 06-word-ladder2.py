@@ -1,5 +1,11 @@
 from david import show, count_calls
 from collections import deque, defaultdict
+from itertools import tee
+
+def showiter(i):
+    a,b = tee(i)
+    print('!', ''.join(map(str, b)))
+    return a
 
 
 class Trie:
@@ -21,15 +27,17 @@ class Trie:
         except StopIteration:
             self.terminal = True
             return
-        # first, suffix = word[0], word[1:]
         if first not in self.suffix_by_first:
             self.suffix_by_first[first] = Trie(first, self)
         self.suffix_by_first[first].add(suffix)
 
+    @show
     def get_last(self, word):
         """ returns the Trie (rooted at self) whose letter is word[-1] """
         return self._get_last(iter(word))
+    @show
     def _get_last(self, word):
+        word = showiter(word)
         try:
             first, suffix = next(word), word
         except StopIteration:
@@ -37,7 +45,7 @@ class Trie:
 
         if first not in self.suffix_by_first:
             return
-        return self.suffix_by_first[first].get_last(suffix)
+        return self.suffix_by_first[first]._get_last(suffix)
 
     def __iter__(self):
         yield from self.suffix_by_first.values()
@@ -94,6 +102,7 @@ def build_dictionary(words):
 
 
 def count_neighbors(word, dictionary, max_dist=1):
+    # Don't care enough to use iter; was just for experimenting.
     if max_dist < 0:
         return 0
     if max_dist == 0:
@@ -113,6 +122,7 @@ def count_neighbors(word, dictionary, max_dist=1):
 
 
 def get_neighbors(word, dictionary, max_dist=1):
+    # Don't care enough to use iter; was just for experimenting.
     """inefficient but I believe working"""
     if max_dist < 0:
         return []
@@ -136,26 +146,44 @@ def get_neighbors(word, dictionary, max_dist=1):
     return neighbors
 
 
-# @show
+@show
 def neighbor_generator(word, dictionary, max_dist=1):
     assert isinstance(word, str)
+    return _neighbor_generator(iter(word), dictionary, max_dist)
+@show
+def _neighbor_generator(word, dictionary, max_dist):
     assert isinstance(dictionary, Trie)
+    word = showiter(word)
     if max_dist == 0:
-        last_word = dictionary.get_last(word)
+        last_word = dictionary._get_last(word)
         if last_word is not None:
             yield last_word
         return
+    print(f'{max_dist =}')
+    assert max_dist > 0
 
-    # TODO:  avoid string slicing; use iter(word)?
-    suffix = word[1:]
+    try:
+        ofirst, suffix = next(word), word
+        print(f'{ofirst =}')
+        print('suffix',end='= ')
+        suffix = showiter(suffix)
+    except StopIteration:
+        assert False
+        return
+
+    # # TODO:  avoid string slicing; use iter(word)?
+    # suffix = word[1:]
     for first, child in dictionary.suffix_by_first.items():
+        print(f'{first =}')
+        print(f'{child =}')
         subproblem_max_dist = max_dist
-        if first != word[0]:
+        if first != ofirst:
             # I would think this would let me lose the 'return' above...
             # if max_dist == 0:
             #     continue
             subproblem_max_dist -= 1
-        yield from neighbor_generator(suffix, child, subproblem_max_dist)
+        # BUG: I reuse suffix iterator!
+        yield from _neighbor_generator(suffix, child, subproblem_max_dist)
 
 
 # @show
@@ -299,9 +327,20 @@ def test_leaf_generator_count():
     )
     assert first.parent is second.parent
     assert d.leaf_generator.call_count == len(words[0]) + 1
-    print("test_leaf_generator passes")
+    print("test_leaf_generator_count passes")
     print()
 
+
+def test_get_last():
+    d = build_dictionary(wordList)
+    hot_last = d.get_last('hot')
+    assert hot_last is d.suffix_by_first["h"].suffix_by_first["o"].suffix_by_first["t"]
+    assert hot_last.get_word() == 'hot'
+    h_ot_last = d.suffix_by_first['h'].get_last('ot')
+    assert h_ot_last is hot_last
+    assert d.get_last('at') is None
+    print("test_get_last passes")
+    print()
 
 def test_neighbor_generator():
     d = build_dictionary(wordList)
@@ -310,7 +349,9 @@ def test_neighbor_generator():
     assert first.get_word() == "hot"
     assert first is d.suffix_by_first["h"].suffix_by_first["o"].suffix_by_first["t"]
     try:
+        # breakpoint()
         second = next(g)
+        print(second)
         assert False
     except StopIteration:
         pass
@@ -340,12 +381,13 @@ def test_ladder_length():
 
 
 wordList = ["hot", "dot", "dog", "lot", "log", "cog"]
-test_build_dictionary()
-test_count_neighbors()
-test_get_neighbors()
-test_word_generator()
-test_leaf_generator()
-test_leaf_generator_count()
+# test_build_dictionary()
+# test_count_neighbors()
+# test_get_neighbors()
+# test_word_generator()
+# test_leaf_generator()
+# test_leaf_generator_count()
+# test_get_last()
 test_neighbor_generator()
-test_bfs_generator()
-test_ladder_length()
+# test_bfs_generator()
+# test_ladder_length()

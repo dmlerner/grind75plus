@@ -1,6 +1,6 @@
-
-NULL = 'NULL'
+NULL = "NULL"
 UNSET_NODE = TreeNode(None)
+
 
 def _serialize(root):
     if not root:
@@ -10,13 +10,16 @@ def _serialize(root):
     yield from _serialize(root.left)
     yield from _serialize(root.right)
 
+
 def serialize(root):
     # Use strings to make leetcode happy
     # but the generator versions are way cooler
-    return ','.join(list(_serialize(root)))
+    return ",".join(list(_serialize(root)))
+
 
 def make_node_with_null_children(val):
     return TreeNode(int(val), UNSET_NODE, UNSET_NODE)
+
 
 def _deserialize(serialized_generator):
     root = make_node_with_null_children(next(serialized_generator))
@@ -36,10 +39,11 @@ def _deserialize(serialized_generator):
             stack.append(t)
     return root
 
-def deserialize(serialized_str):
-    return _deserialize(iter(serialized_str.split(',')))
 
-t = TreeNode.create((1,2,3,4))
+def deserialize(serialized_str):
+    return _deserialize(iter(serialized_str.split(",")))
+
+
+t = TreeNode.create((1, 2, 3, 4))
 ds = deserialize(serialize(t))
 assert t == ds
-

@@ -1,8 +1,9 @@
 # https://leetcode.com/problems/trapping-rain-water/
 from david import show, recursion_limit
+
 # two oh two
 
-'''
+"""
 index i may be the left edge of trapped rain
 if h[i-1] < h[i]
 if there is a run of equal h
@@ -26,7 +27,7 @@ min(h[l], h[r])
 
 volume trapped is trickier
 note getting total, not max in one region
-'''
+"""
 
 
 def get_left_bounds(heights):
@@ -37,19 +38,23 @@ def get_left_bounds(heights):
         # if count > 10:
         #     break
         # print(i)
-        if heights[i-1] < heights[i]:
+        if heights[i - 1] < heights[i]:
             i = get_right_of_run(heights, i)
             yield i
         i += 1
 
+
 def get_right_bound(heights, l):
-    i = l+1
-    while i < len(heights)-1:
-        if heights[i] > heights[i+1]:#heights[i] > heights[l] or heights[i] == heights[l] and i != l:
+    i = l + 1
+    while i < len(heights) - 1:
+        if (
+            heights[i] > heights[i + 1]
+        ):  # heights[i] > heights[l] or heights[i] == heights[l] and i != l:
             # if True or heights[i] > heights[i+1]:
             return i
         i += 1
     # return len(heights) - 1
+
 
 def get_right_of_run(heights, i):
     h = heights[i]
@@ -60,22 +65,25 @@ def get_right_of_run(heights, i):
     #     if heights[j] != heights[i]:
     #         return j - 1
 
+
 def calculate_volume(heights):
     total = 0
     left_boundary = None
     right_boundary = None
     to_fill = []
     for i, h in enumerate(heights[1:]):
-        if heights[i-1] < h:
+        if heights[i - 1] < h:
             left_boundary = i
-        if h < heights[i+1]:
+        if h < heights[i + 1]:
             pass
+
 
 def calculate_volume2(heights):
     total = 0
     for l in get_left_bounds(heights):
         r = get_right_bound(heights, l)
         print(l, r)
+
 
 def compress(heights):
     i = 0
@@ -84,23 +92,28 @@ def compress(heights):
         yield (i, size)
         i += size
 
+
 def get_run_size(heights, i):
     size = 1
-    for j in range(i+1, len(heights)):
+    for j in range(i + 1, len(heights)):
         if heights[j] == heights[i]:
             size += 1
         else:
             break
     return size
 
+
 @show
 @recursion_limit(30)
 def ascends(i):
-    return i in range(1, len(heights)) and heights[i-1] < heights[i]
+    return i in range(1, len(heights)) and heights[i - 1] < heights[i]
+
+
 @show
 @recursion_limit(30)
 def descends(i):
-    return i in range(len(heights)-1) and heights[i+1] < heights[i]
+    return i in range(len(heights) - 1) and heights[i + 1] < heights[i]
+
 
 from itertools import count
 
@@ -128,6 +141,7 @@ def get_plateau(i):
 #             volume += height - heights[j]
 #     return volume
 
+
 def calculate_volume4():
     volume = 0
     i = 0
@@ -137,14 +151,15 @@ def calculate_volume4():
             right, next_left = get_plateau(i)
             if left:
                 h = min(heights[left], heights[right])
-                for j in range(left+1, right):
+                for j in range(left + 1, right):
                     volume += h - heights[j]
             left = next_left
-            i = next_left+1 # TODO: fewer variables
+            i = next_left + 1  # TODO: fewer variables
         except StopIteration:
             return volume
     assert False
     return volume
+
 
 def cheat():
     # chat.openai.com translated official c++ solution, wow
@@ -159,17 +174,15 @@ def cheat():
                 break
             distance = current - st[-1] - 1
             bounded_heights = min(heights[current], heights[st[-1]]) - heights[top]
-            print(current, st[-1],heights[current], heights[st[-1]], heights[top])
+            print(current, st[-1], heights[current], heights[st[-1]], heights[top])
             ans += distance * bounded_heights
         st.append(current)
         current += 1
     return ans
 
 
-
-
-i       =  0,1,2,3,4,5,6,7,8,9,0,1
-heights = [0,1,0,2,1,0,1,3,2,1,2,1]
+i = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1
+heights = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]
 # print(list(get_left_bounds(heights)))
 # heights = [3, 3, 3, 2, 2, 1, 2, 2, 3, 3]
 v = cheat()

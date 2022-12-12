@@ -20,18 +20,22 @@ def show(f):
     def _f(*args, **kwargs):
         print(f.__name__, *args, *kwargs.items())
         ret = f(*args, **kwargs)
-        print(f.__name__, *args, *kwargs.items(), '->', ret)
+        print(f.__name__, *args, *kwargs.items(), "->", ret)
         return ret
 
     return _f
+
 
 def count_calls(f):
     def _f(*args, **kwargs):
         _f.call_count += 1
         return f(*args, **kwargs)
+
     _f.call_count = 0
+
     def reset_call_count():
         _f.call_count = 0
+
     _f.reset_call_count = reset_call_count
     return _f
 
@@ -39,10 +43,12 @@ def count_calls(f):
 def is_leaf(node):
     return node.left is None and node.right is None
 
+
 def assert_null_or_same_type(a, b):
     if a is None or b is None:
         return
     assert type(a) is type(a)
+
 
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
@@ -63,7 +69,11 @@ class TreeNode:
             return self is None
         assert isinstance(other, TreeNode)
         assert_null_or_same_type(self.val, other.val)
-        return self.val == other.val and self.left == other.left and self.right == other.right
+        return (
+            self.val == other.val
+            and self.left == other.left
+            and self.right == other.right
+        )
 
     @staticmethod
     def create(vals):
@@ -93,22 +103,28 @@ class Node:
     def __repr__(self):
         return f"G({self.val}, {len(self.neighbors)})"
 
+
 from functools import wraps
 import inspect
+
+
 def show_locals(n=1):
     frame = inspect.currentframe()
     for i in range(n):
         frame = frame.f_back
 
+
 def recursion_limit(n=10):
     def decorator(f):
         count = 0
+
         @wraps(f)
         def _f(*args):
             nonlocal count
             assert count < n
             count += 1
             return f(*args)
-        return _f
-    return decorator
 
+        return _f
+
+    return decorator

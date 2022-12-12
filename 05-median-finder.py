@@ -7,8 +7,9 @@ import heapq
 from itertools import starmap
 import operator
 
+
 class MinHeap:
-    def __init__(self, key=lambda x:x):
+    def __init__(self, key=lambda x: x):
         self.data = []
         self.key = key
 
@@ -27,9 +28,11 @@ class MinHeap:
     def __repr__(self):
         return repr(self.data)
 
+
 class MaxHeap(MinHeap):
-    def __init__(self, key=lambda x:x):
+    def __init__(self, key=lambda x: x):
         super().__init__(lambda x: -key(x))
+
 
 class MedianFinder:
     def __init__(self):
@@ -43,7 +46,7 @@ class MedianFinder:
         heaps = self.get_heaps()
         if len(self) % 2:
             return max(heaps, key=len).peek()
-        return sum(h.peek() for h in heaps)/2
+        return sum(h.peek() for h in heaps) / 2
 
     def addNum(self, num):
         if not len(self):
@@ -64,7 +67,8 @@ class MedianFinder:
             heaps[0].push(heaps[1].pop())
 
     def __repr__(self):
-        return f'{self.below_median}, {self.above_median}, {self.findMedian()}'
+        return f"{self.below_median}, {self.above_median}, {self.findMedian()}"
+
 
 m = MedianFinder()
 # print(m)

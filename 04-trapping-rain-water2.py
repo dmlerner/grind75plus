@@ -1,6 +1,7 @@
-#https://leetcode.com/problems/trapping-rain-water/description/
-#eight oh one
-#eight thirty six, mostly spent trying unsuccessfully to prove it
+# https://leetcode.com/problems/trapping-rain-water/description/
+# eight oh one
+# eight thirty six, mostly spent trying unsuccessfully to prove it
+
 
 def calculate_trapped(heights):
     trapped = 0
@@ -29,6 +30,7 @@ def calculate_trapped(heights):
 
     return trapped
 
+
 def pop_to_maintain_invariant(heights, mq, h):
     popped = None
     while mq and heights[mq[-1]] < h:
@@ -40,7 +42,7 @@ def calculate_trapped2(heights):
     # heights = [float('inf')]+heights
     trapped = 0
     # redo with linear storage stack approach
-    index_mq = [] # non-strict monotonic decreasing
+    index_mq = []  # non-strict monotonic decreasing
     for i, h in enumerate(heights):
         # TODO: rename to_fill
         to_fill_index = pop_to_maintain_invariant(heights, index_mq, h)
@@ -59,7 +61,8 @@ def calculate_trapped2(heights):
 
     return trapped
 
-heights = [0,1,0,2,1,0,1,3,2,1,2,1]
-indices =0,1,2,3,4,5,6,7,8,9,0
-heights = [2,1,1,0,1,0,1,3,2,3]
+
+heights = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]
+indices = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0
+heights = [2, 1, 1, 0, 1, 0, 1, 3, 2, 3]
 print(calculate_trapped2(heights))

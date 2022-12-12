@@ -1,4 +1,4 @@
-from david import show, count_calls
+from david import show
 from collections import deque, defaultdict
 
 class Trie:
@@ -86,25 +86,6 @@ def build_dictionary(words):
     return dictionary
 
 
-def count_neighbors(word, dictionary, max_dist=1):
-    # Don't care enough to use iter; was just for experimenting.
-    if max_dist < 0:
-        return 0
-    if max_dist == 0:
-        return word in dictionary
-
-    count = 0
-
-    for letter, child in dictionary.suffix_by_first.items():
-
-        subproblem_max_dist = max_dist
-        if letter != word[0]:
-            subproblem_max_dist -= 1
-
-        count += count_neighbors(word[1:], child, subproblem_max_dist)
-
-    return count
-
 
 def get_neighbors(word, dictionary, max_dist=1):
     # Don't care enough to use iter; was just for experimenting.
@@ -135,15 +116,12 @@ def get_neighbors(word, dictionary, max_dist=1):
 def neighbor_generator(word, dictionary, max_dist=1, i=0):
     assert isinstance(word, str)
     assert isinstance(dictionary, Trie)
-    if i == len(word):
-        # TODO: can I have get_last handle this somehow?
-        yield dictionary
-    if i >= len(word):
-        return
     if max_dist == 0:
         last_word = dictionary.get_last(word, i)
         if last_word is not None:
             yield last_word
+        return
+    if i >= len(word):
         return
     assert max_dist > 0
 
@@ -247,7 +225,7 @@ def test_get_neighbors():
     d = build_dictionary(wordList)
     assert get_neighbors("hat", d) == ["hot"]
     assert get_neighbors("hot", d) == ["dot", "lot"]
-    assert get_neighbors('dot') == ['hot', 'lot', 'dog']
+    assert set(get_neighbors('dot', d)) == {'hot', 'lot', 'dog'}
     assert get_neighbors("xxx", d) == []
     assert get_neighbors("xx", d) == []
     assert get_neighbors("xxxx", d) == []
@@ -284,39 +262,6 @@ def test_leaf_generator():
     print()
 
 
-def test_leaf_generator_count():
-    words = ["abcdefg", "abcdefh"]
-    d = build_dictionary(words)
-    d.leaf_generator.reset_call_count()
-    g = d.leaf_generator()
-    first = next(g)
-    assert first.get_word() == "abcdefg"
-    assert (
-        first
-        is d.suffix_by_first["a"]
-        .suffix_by_first["b"]
-        .suffix_by_first["c"]
-        .suffix_by_first["d"]
-        .suffix_by_first["e"]
-        .suffix_by_first["f"]
-        .suffix_by_first["g"]
-    )
-    second = next(g)
-    assert (
-        second
-        is d.suffix_by_first["a"]
-        .suffix_by_first["b"]
-        .suffix_by_first["c"]
-        .suffix_by_first["d"]
-        .suffix_by_first["e"]
-        .suffix_by_first["f"]
-        .suffix_by_first["h"]
-    )
-    assert first.parent is second.parent
-    assert d.leaf_generator.call_count == len(words[0]) + 1
-    print("test_leaf_generator_count passes")
-    print()
-
 
 def test_get_last():
     d = build_dictionary(wordList)
@@ -351,16 +296,7 @@ def test_neighbor_generator2():
     g = neighbor_generator('dot', d, 1)
     neighbors = {n.get_word() for n in g}
     print(neighbors)
-    return
-    assert next(g).get_word() == 'hot'
-    print(next(g).get_word())# == 'lot'
-    # breakpoint()
-    # dog = next(g)
-    # print(dog, dog.get_word())
-    # assert dog.get_word() == 'dog'
-    # next(g)
-    # print(neighbors)
-    # assert neighbors == {'hot', 'lot', 'dog'}
+    assert neighbors == {'hot', 'lot', 'dog'}
     print("test_neigbhor_generator2 passes")
     print()
 
@@ -387,15 +323,13 @@ def test_ladder_length():
 
 
 wordList = ["hot", "dot", "dog", "lot", "log", "cog"]
-# test_build_dictionary()
-# test_contains()
-# test_count_neighbors()
-# test_get_neighbors()
-# test_word_generator()
-# test_leaf_generator()
-# test_leaf_generator_count()
-# test_get_last()
-# test_neighbor_generator()
+test_build_dictionary()
+test_contains()
+test_get_neighbors()
+test_word_generator()
+test_leaf_generator()
+test_get_last()
+test_neighbor_generator()
 test_neighbor_generator2()
 test_bfs_generator()
 test_ladder_length()

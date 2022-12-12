@@ -166,7 +166,6 @@ def neighbor_generator(word, dictionary, max_dist=1, i=0):
             # if max_dist == 0:
             #     continue
             subproblem_max_dist -= 1
-        # BUG: I reuse suffix iterator!
         yield from neighbor_generator(word, child, subproblem_max_dist, i+1)
 
 
@@ -177,7 +176,9 @@ def bfs_generator(word, dictionary):
     dist_by_word = {word: 1}  # problem wants node count, not edge
     visited = set()
     while frontier:
+        print('!frontier=', frontier)
         active = frontier.popleft()
+        print('!active=', active)
         assert isinstance(active, str)
         # TODO: optimize out the get_word
         for neighbor in neighbor_generator(active, dictionary):
@@ -185,16 +186,22 @@ def bfs_generator(word, dictionary):
             assert neighbor is not None
             if neighbor not in visited:
                 neighbor_word = neighbor.get_word()
+                print(f'{neighbor_word =}')
                 dist_by_word[neighbor_word] = dist_by_word[active] + 1
+                print('!', f'{dist_by_word=}')
                 visited.add(neighbor)
                 yield dist_by_word[neighbor_word], neighbor
                 frontier.append(neighbor_word)
+            else:
+                print('!aready visited=', neighbor, neighbor.get_word())
 
 
 def ladder_length(start, end, word_list):
     d = build_dictionary(word_list)
     target_node = d.get_last(end)
+    print(f'{target_node.get_word() =}')
     for (dist, last_word_node) in bfs_generator(start, d):
+        print('!!', dist, last_word_node.get_word())
         if last_word_node is target_node:
             return dist
     return 0
@@ -250,6 +257,7 @@ def test_get_neighbors():
     d = build_dictionary(wordList)
     assert get_neighbors("hat", d) == ["hot"]
     assert get_neighbors("hot", d) == ["dot", "lot"]
+    assert get_neighbors('dot') == ['hot', 'lot', 'dog']
     assert get_neighbors("xxx", d) == []
     assert get_neighbors("xx", d) == []
     assert get_neighbors("xxxx", d) == []
@@ -347,6 +355,15 @@ def test_neighbor_generator():
     print("test_neigbhor_generator passes")
     print()
 
+def test_neighbor_generator2():
+    d = build_dictionary(wordList)
+    g = neighbor_generator('dot', d, 1)
+    neighbors = {n.get_word() for n in g}
+    print(neighbors)
+    assert neighbors == {'hot', 'lot', 'dog'}
+    print("test_neigbhor_generator2 passes")
+    print()
+
 
 def test_bfs_generator():
     d = build_dictionary(wordList)
@@ -366,18 +383,19 @@ def test_bfs_generator():
 def test_ladder_length():
     length = ladder_length("hit", "cog", wordList)
     print("!", length)
-    assert length == 5
+    # assert length == 5
 
 
 wordList = ["hot", "dot", "dog", "lot", "log", "cog"]
-test_build_dictionary()
-test_contains()
-test_count_neighbors()
-test_get_neighbors()
-test_word_generator()
-test_leaf_generator()
-test_leaf_generator_count()
-test_get_last()
-test_neighbor_generator()
-test_bfs_generator()
-test_ladder_length()
+# test_build_dictionary()
+# test_contains()
+# test_count_neighbors()
+# test_get_neighbors()
+# test_word_generator()
+# test_leaf_generator()
+# test_leaf_generator_count()
+# test_get_last()
+# test_neighbor_generator()
+test_neighbor_generator2()
+# test_bfs_generator()
+# test_ladder_length()

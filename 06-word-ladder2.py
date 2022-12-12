@@ -13,21 +13,28 @@ class Trie:
         self.terminal = False
 
     def add(self, word):
-        if not word:
+        self._add(iter(word))
+
+    def _add(self, word):
+        try:
+            first, suffix = next(word), word
+        except StopIteration:
             self.terminal = True
             return
-        first, suffix = word[0], word[1:]
+        # first, suffix = word[0], word[1:]
         if first not in self.suffix_by_first:
             self.suffix_by_first[first] = Trie(first, self)
         self.suffix_by_first[first].add(suffix)
 
     def get_last(self, word):
-        assert isinstance(word, str)
         """ returns the Trie (rooted at self) whose letter is word[-1] """
-        if not word:
+        return self._get_last(iter(word))
+    def _get_last(self, word):
+        try:
+            first, suffix = next(word), word
+        except StopIteration:
             return self
 
-        first, suffix = word[0], word[1:]
         if first not in self.suffix_by_first:
             return
         return self.suffix_by_first[first].get_last(suffix)
@@ -43,14 +50,19 @@ class Trie:
         return self.letter + children
 
     def __contains__(self, word):
-        if not word:
+        return self._contains(iter(word))
+
+    def _contains(self, word):
+        try:
+            first, suffix = next(word), word
+        except StopIteration:
             return self.terminal
-        first, suffix = word[0], word[1:]
         if first not in self.suffix_by_first:
             return False
         return suffix in self.suffix_by_first[first]
 
     def get_word(self):
+        # TODO: avoid quadratic
         if self.parent is None:
             return ""
         return self.parent.get_word() + self.letter
@@ -66,7 +78,7 @@ class Trie:
             if prefix_list:
                 yield prefix_list
 
-    # @count_calls
+    @count_calls
     def leaf_generator(self):
         for first, suffix in self.suffix_by_first.items():
             if suffix.terminal:

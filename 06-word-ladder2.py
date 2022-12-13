@@ -150,21 +150,24 @@ def neighbor_generator(word, dictionary, max_dist=1, i=0):
 def bfs_generator(word, dictionary):
     frontier = deque([word])
     dist_by_word = {word: 1}  # problem wants node count, not edge
-    visited = set()
+    # visited = set()
     while frontier:
         active = frontier.popleft()
+        # assert isinstance(active, str)
         # TODO: optimize out the get_word
         for neighbor in neighbor_generator(active, dictionary):
-            if neighbor not in visited:
-                neighbor_word = str(neighbor.get_word())
+            neighbor_word = str(neighbor.get_word())
+            if neighbor_word not in dist_by_word:
                 dist_by_word[neighbor_word] = dist_by_word[active] + 1
-                visited.add(neighbor)
+                # visited.add(neighbor)
                 yield dist_by_word[neighbor_word], neighbor
                 frontier.append(neighbor_word)
 
 
 def ladder_length(start, end, word_list):
-    d = build_dictionary(word_list)
+    if len(start) != len(end):
+        return 0
+    d = build_dictionary(filter(lambda w: len(w) == len(start), word_list))
     target_node = d.get_last(end)
     for (dist, last_word_node) in bfs_generator(start, d):
         if last_word_node is target_node:

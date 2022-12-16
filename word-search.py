@@ -55,22 +55,26 @@ def find_words(grid, word_list):
         if letter not in trie:
             return
 
-        # used.add(rc)
-        grid_set(rc, None)
+        used.add(rc)
+        # grid_set(rc, None)
         next_trie = trie[letter]
 
         if WORD_KEY in next_trie:
             yield next_trie.pop(WORD_KEY)
+        if not next_trie:
+            trie.pop(letter)
 
         for neighbor in get_neighbors(rc):
-            neighbor_letter = get(neighbor)
-            if neighbor_letter is None:# in used:
+            if neighbor in used:
                 continue
+            # neighbor_letter = get(neighbor)
+            # if neighbor_letter is None:# in used:
+            #     continue
 
             yield from _find_words2(neighbor, next_trie)
 
-        # used.remove(rc)
-        grid_set(rc, letter)
+        used.remove(rc)
+        # grid_set(rc, letter)
 
 
 
@@ -204,14 +208,13 @@ def verify(actual, expected):
         print(f'{expected=}')
         print(f'{actual  =}')
 
-# board = [["a"]]
-# words = ["a"]
-# verify(find_words(board, words), ('a'))
-# # breakpoint()
-# board = [["a", "a"]]
-# words = ["aaa"]
-# verify(find_words(board, words), ())
-# 1/0
+board = [["a"]]
+words = ["a"]
+verify(find_words(board, words), ('a'))
+# breakpoint()
+board = [["a", "a"]]
+words = ["aaa"]
+verify(find_words(board, words), ())
 board = [
     ["o", "a", "a", "n"],
     ["e", "t", "a", "e"],

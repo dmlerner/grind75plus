@@ -55,7 +55,6 @@ def find_words(grid, word_list):
         if letter not in trie:
             return
 
-        used.add(rc)
         # grid_set(rc, None)
         next_trie = trie[letter]
 
@@ -63,18 +62,16 @@ def find_words(grid, word_list):
             yield next_trie.pop(WORD_KEY)
         if not next_trie:
             trie.pop(letter)
+            return
+
+        used.add(rc)
 
         for neighbor in get_neighbors(rc):
             if neighbor in used:
                 continue
-            # neighbor_letter = get(neighbor)
-            # if neighbor_letter is None:# in used:
-            #     continue
-
             yield from _find_words2(neighbor, next_trie)
 
         used.remove(rc)
-        # grid_set(rc, letter)
 
 
 

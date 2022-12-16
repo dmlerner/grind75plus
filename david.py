@@ -1,3 +1,4 @@
+
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
@@ -17,6 +18,7 @@ class ListNode:
 
 
 def show(f):
+    @wraps(f)
     def _f(*args, **kwargs):
         print(f.__name__, *args, *kwargs.items())
         ret = f(*args, **kwargs)
@@ -128,3 +130,9 @@ def recursion_limit(n=10):
         return _f
 
     return decorator
+
+def listify(f):
+    @wraps(f)
+    def _f(*args, **kwargs):
+        return list(f(*args, **kwargs))
+    return _f

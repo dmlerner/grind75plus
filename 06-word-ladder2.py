@@ -318,16 +318,20 @@ def test_bfs_generator():
 def test_ladder_length():
     length = ladder_length("hit", "cog", wordList)
     assert length == 5
+    print('test_ladder_length passes')
 
 def test_large():
     with open('./words_alpha.txt') as f:
-        words = f.readlines()
+        words = map(lambda x: x.strip(), f.readlines())
     n = 6
     same_length_words = list(filter(lambda x: len(x) == n, words))
     import random
     a, b = random.choice(same_length_words), random.choice(same_length_words)
-    a,b='artar', 'oinks'
-    print(a, b, ladder_length(a, b, same_length_words))
+    a,b='faunal', 'mainan'
+    # a,b='artar', 'oinks'
+    length=ladder_length(a, b, same_length_words)
+    assert length == 14
+    # print(a, b, )
 
 
 
@@ -343,5 +347,5 @@ test_neighbor_generator()
 test_neighbor_generator2()
 test_bfs_generator()
 test_ladder_length()
-# test_large()
+test_large()
 

@@ -48,10 +48,10 @@ def find_words(grid, word_list):
         '''
         consider adding rc to a word.
         '''
-        assert rc not in used
+        # assert rc not in used
 
         letter = get(rc)
-        assert letter is not None # trivially true via used
+        # assert letter is not None # trivially true via used
         if letter not in trie:
             return
 

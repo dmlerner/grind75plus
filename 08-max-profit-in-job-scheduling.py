@@ -11,18 +11,20 @@ from collections import deque
 from dataclasses import dataclass
 from itertools import starmap
 
+
 @dataclass(frozen=True)
 class Job:
-    start:float
+    start: float
     end: float
     profit: float
 
     def conflicts(self, other):
-        first, second = sorted([self, other], key = lambda j: j.start)
+        first, second = sorted([self, other], key=lambda j: j.start)
         return first.start <= second.start < first.end
 
+
 def get_next_by_job(jobs):
-    sorted_by_start = jobs#sorted(jobs, key=lambda j: j.start)
+    sorted_by_start = jobs  # sorted(jobs, key=lambda j: j.start)
     sorted_by_end = sorted(jobs, key=lambda j: j.end)
     next_by_job = {}
     s = 0
@@ -36,10 +38,12 @@ def get_next_by_job(jobs):
         e += 1
     return next_by_job
 
+
 def max_profit(starts, ends, profits):
     jobs = list(starmap(Job, zip(starts, ends, profits)))
     jobs.sort(key=lambda j: j.start)
     next_by_job = get_next_by_job(jobs)
+
     def dp(i):
         if i >= len(jobs):
             return 0
@@ -49,16 +53,18 @@ def max_profit(starts, ends, profits):
         if next_job_index is not None:
             profit_with_job += dp(next_job_index)
 
-        return max(profit_with_job, dp(i+1))
+        return max(profit_with_job, dp(i + 1))
+
     return dp(0)
 
-startTime = [1,2,3,3]
-endTime = [3,4,5,6]
-profit = [50,10,40,70]
+
+startTime = [1, 2, 3, 3]
+endTime = [3, 4, 5, 6]
+profit = [50, 10, 40, 70]
 print(max_profit(startTime, endTime, profit))
 print()
 
-startTime = [1,2,3,4,6]
-endTime = [3,5,10,6,9]
-profit = [20,20,100,70,60]
+startTime = [1, 2, 3, 4, 6]
+endTime = [3, 5, 10, 6, 9]
+profit = [20, 20, 100, 70, 60]
 print(max_profit(startTime, endTime, profit))

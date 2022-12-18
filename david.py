@@ -113,22 +113,38 @@ def show_locals(n=1):
     frame = inspect.currentframe()
     for i in range(n):
         frame = frame.f_back
+    print('\n'.join(map(str, frame.f_locals.items())))
 
+# def recursion_limit(n=10):
+#     def decorator(f):
+#         count = 0
 
-def recursion_limit(n=10):
-    def decorator(f):
-        count = 0
+#         @wraps(f)
+#         def _f(*args):
+#             nonlocal count
+#             assert count < n
+#             count += 1
+#             return f(*args)
 
-        @wraps(f)
-        def _f(*args):
-            nonlocal count
-            assert count < n
-            count += 1
-            return f(*args)
+#         return _f
 
-        return _f
+#     return decorator
 
-    return decorator
+class InfiniteRecursionException(Exception):
+    pass
+
+def recursion_limit(f):
+    memo = {}
+    @wraps(f)
+    def _f(*args, **kwargs):
+        key = args, tuple(kwargs.items())
+        if key in memo and memo[key] is None:
+            raise InfiniteRecursionException()
+        memo[key] = None
+        ret = f(*args, **kwargs)
+        memo[key] = ret
+        return ret
+    return _f
 
 
 def listify(f):

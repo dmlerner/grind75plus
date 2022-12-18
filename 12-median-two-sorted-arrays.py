@@ -68,7 +68,7 @@ def get_ith_element(xs, ys, xi, xj, yi, yj, i, n):
     # where would pivot of x go in y?
     # that is, the pivot of the part of x still in consideration; x[xi:xj+1]
     # ignore duplicate elements
-    xs_pivot_y_insertion_index = bisect.bisect(ys, xs_pivot, yi, yj+1) + yi
+    xs_pivot_y_insertion_index = bisect.bisect(ys, xs_pivot, yi, yj+1) #+ yi
     ys_below_xs_pivot = xs_pivot_y_insertion_index - yi
     # true for odd or even
     xs_below_xs_pivot = xs_pivot_index - xi

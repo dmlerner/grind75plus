@@ -51,6 +51,9 @@ def get_ith_element(xs, ys, xi, xj, yi, yj, i, n):
     if nx < ny:
         return get_ith_element(ys, xs, yi, yj, xi, xj, i, n)
 
+    if ny == 0:
+        return xs[xi+i]
+
     total_elements = nx + ny
     assert 0 <= i < total_elements
 

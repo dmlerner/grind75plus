@@ -30,6 +30,7 @@ def get_next_by_job(jobs):
     s = 0
     e = 0
     while e < len(jobs) and s < len(jobs):
+        print(s, e)
         js, je = sorted_by_start[s], sorted_by_end[e]
         if js is je or js.conflicts(je):
             s += 1
@@ -58,11 +59,11 @@ def max_profit(starts, ends, profits):
     return dp(0)
 
 
-startTime = [1, 2, 3, 3]
-endTime = [3, 4, 5, 6]
-profit = [50, 10, 40, 70]
-print(max_profit(startTime, endTime, profit))
-print()
+# startTime = [1, 2, 3, 3]
+# endTime = [3, 4, 5, 6]
+# profit = [50, 10, 40, 70]
+# print(max_profit(startTime, endTime, profit))
+# print()
 
 startTime = [1, 2, 3, 4, 6]
 endTime = [3, 5, 10, 6, 9]

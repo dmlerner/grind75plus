@@ -81,28 +81,33 @@ def longest_path2(matrix):
             combined_length = tail.length + path.length
             longer = combined_length > best_path.length
             same_length = combined_length == best_path.length
+            # This is irrelevant. 
+            # If a tie being broken by this were to matter,
+            # that path would have to end up longer
+            # but it didn't, by definition!
             lower_end_value = get(tail.end) < get(best_path.end)
             # sl()
             if longer or (same_length and lower_end_value):
                 best_path = Path(path.start, tail.end, combined_length)
         return best_path
 
+    @cache
+    def i_cheated(start):
+        m = 1
+        for rc2 in get_four_connected(start):
+            if get(rc2) > get(start):
+                m = max(i_cheated(rc2) + 1, m)
+        return m
+
 
     R, C = len(matrix), len(matrix[0])
     row_indices = range(R)
     col_indices = range(C)
     longest = 1
-    # { start: { end: longest known Path }}
-    paths_by_start = {
-            # TODO: could I just have dfs3 fill this even?
-        (r, c): {(r, c): Path((r, c), (r, c), 1)}
-        for r in row_indices
-        for c in col_indices
-    }
-    count = R * C
     for row in row_indices:
         for col in col_indices:
-            longest = max(longest, longest_path_from((row, col)).length)
+            longest = max(longest, i_cheated((row, col)))
+            # longest = max(longest, longest_path_from((row, col)).length)
 
     return longest
 

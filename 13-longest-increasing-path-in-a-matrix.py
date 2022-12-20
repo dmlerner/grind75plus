@@ -48,8 +48,11 @@ def longest_path(matrix):
 
 
 # problem: there are multiple such paths!
-Path = namedtuple("Path", "start end length")
 sl=show_locals
+
+from collections import namedtuple, deque
+from functools import cache
+Path = namedtuple("Path", "start end length")
 
 def longest_path2(matrix):
     def get_four_connected(rc):
@@ -65,12 +68,14 @@ def longest_path2(matrix):
         return matrix[r][c]
 
     @cache
+    # @show
+    # @recursion_limit
     def longest_path_from(start):
         path = Path(start, start, 1)
         best_path = path
 
         for rc2 in get_four_connected(path.end):
-            if not get(p.end) < get(rc2):
+            if not get(path.end) < get(rc2):
                 continue
             tail = longest_path_from(rc2)
             combined_length = tail.length + path.length
@@ -82,94 +87,6 @@ def longest_path2(matrix):
                 best_path = Path(path.start, tail.end, combined_length)
         return best_path
 
-
-    def dfs2(path):
-        if path.start not in paths_by_start:
-            paths_by_start[path.start] = { path.end: path }
-        elif path.end not in paths_by_start[path.start]:
-            paths_by_start[path.start][path.end] = path
-        else:
-            assert paths_by_start[path.start][path.end] == path
-
-        longest_child_path = path
-
-        r1, c1 = p.end
-        for rc2 in get_four_connected(path.end):
-            r2, c2 = rc2
-            if not matrix[r1][c1] < matrix[r2][c2]:
-                continue
-
-            for p2 in paths_by_start[rc2].values():
-                combined = Path(path.start, rc2, path.length + p2.length)
-                first_route = combined.end not in paths_by_start[path.start]
-                if first_route or combined.length > paths_by_start[path.start][combined.end].length:
-                    paths_by_start[combined.start][combined.end] = combined
-                    extended_combined = dfs2(combined)
-                    if extended_combined.length > longest_child_path.length:
-                        longest_child_path = extended_combined
-                        paths_by_start[rc2][extended_combined.end] = Path(rc2, extended_combined.end, extended_combined.length - path.length)
-
-        paths_by_start[longest_child_path.start][longest_child_path.end] = longest_child_path
-        return longest_child_path
-
-
-
-    # @show
-    def combine(p1, p2):
-        if not p1 or not p2:
-            assert False
-            return False
-        assert isinstance(p1, Path)
-        assert isinstance(p2, Path)
-
-        r1, c1 = p1.end
-        r2, c2 = p2.start
-        if not matrix[r1][c1] < matrix[r2][c2]:
-            return
-
-        return Path(p1.start, p2.end, p1.length + p2.length)
-
-    def get_extensions(path):
-        for adjacent in get_four_connected(path.end):
-            for end, tail in paths_by_start[adjacent].items():
-                if combined := combine(path, tail):
-                    yield combined
-
-    # @show
-    def dfs(path):
-        # print()
-        # print('start')
-        # breakpoint()
-        nonlocal longest, count
-        # print(count, sum(map(len, paths_by_start.values())))
-        assert count == sum(map(len, paths_by_start.values()))
-        # print(count, paths_by_start)
-        # print(count)
-        # if count == 5:
-        #     breakpoint()
-        current_path = paths_by_start[path.start][path.end]
-        if current_path is not path and current_path.length >= path.length:
-            return
-        # if paths_by_start[path.start][path.end].length > path.length:
-        #     return
-        del paths_by_start[path.start][path.end]
-        count -= 1
-        for extension in get_extensions(path):
-            longest = max(longest, extension.length)
-            assert extension not in paths_by_start[path.start]
-            p = paths_by_start[path.start].get(extension.end)
-            if not p or p.length < extension.length:
-                paths_by_start[path.start][extension.end] = extension
-            if not p:
-                count += 1
-            dfs(extension)
-        else:
-            assert path.end not in paths_by_start[path.start]
-            paths_by_start[path.start][path.end] = path
-            count += 1
-
-        # print('end')
-        # print()
 
     R, C = len(matrix), len(matrix[0])
     row_indices = range(R)
@@ -183,11 +100,9 @@ def longest_path2(matrix):
         for c in col_indices
     }
     count = R * C
-    start_paths = {
-        Path((r, c), (r, c), 1) for r in row_indices for c in col_indices
-    }  # p.values for paths in paths_by_start.values() for p in paths}
-    for p in start_paths:
-        longest = max(longest, longest_path_from(p.start).length)
+    for row in row_indices:
+        for col in col_indices:
+            longest = max(longest, longest_path_from((row, col)).length)
 
     return longest
 
@@ -210,16 +125,6 @@ matrix = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ]
 
-matrix = [
-    [0, 1, 2, 3, 4, 5, 6],
-    [7, 8, 9, 10, 11, 12, 13],
-    [14, 15, 16, 17, 18, 19, 20],
-    [21, 22, 23, 24, 25, 26, 27],
-    [28, 29, 30, 31, 32, 33, 34],
-    [35, 36, 37, 38, 39, 40, 41],
-    [42, 43, 44, 45, 46, 47, 48],
-]
-
 # matrix = [[9, 9, 4],
 #           [6, 6, 8],
 #           [2, 1, 1]]
@@ -232,6 +137,18 @@ matrix = [[2, 3],
 matrix = [[3,4,5],
           [3,2,6],
           [2,2,1]]
+
+matrix = [
+    [0, 1, 2, 3, 4, 5, 6],
+    [7, 8, 9, 10, 11, 12, 13],
+    [14, 15, 16, 17, 18, 19, 20],
+    [21, 22, 23, 24, 25, 26, 27],
+    [28, 29, 30, 31, 32, 33, 34],
+    [35, 36, 37, 38, 39, 40, 41],
+    [42, 43, 44, 45, 46, 47, 48],
+]
+
+
 lp = longest_path2(matrix)
 print()
 print(lp)

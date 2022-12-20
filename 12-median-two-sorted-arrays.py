@@ -3,6 +3,7 @@
 # 1:40 uh let's try typing
 # 2:00 other than a gazillion off by ones that might be right
 # 2:09 well it passes for get_zeroth_element...
+# ha, leetcode has no official solution and the top user one describes it as notoriously full of obobs
 from david import show, recursion_limit, show_locals
 
 import bisect
@@ -81,7 +82,7 @@ def get_ith_element(xs, ys, xi, xj, yi, yj, i, n):
     if total_below_xs_pivot == i:
         return xs_pivot
     elif total_below_xs_pivot < i:
-        return get_ith_element(xs, ys, xs_pivot_index, xj, xs_pivot_y_insertion_index, yj, i-total_below_xs_pivot, total_elements - total_below_xs_pivot)
+        return get_ith_element(xs, ys, xs_pivot_index+1, xj, xs_pivot_y_insertion_index, yj, i-total_below_xs_pivot, total_elements - total_below_xs_pivot-1)
     else:
         return get_ith_element(xs, ys, xi, xs_pivot_index-1, yi, xs_pivot_y_insertion_index-1, i, total_below_xs_pivot)
 

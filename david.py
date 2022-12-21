@@ -114,6 +114,7 @@ def show_locals(n=1):
     for i in range(n):
         frame = frame.f_back
     print('\n'.join(map(str, frame.f_locals.items())))
+    print()
 
 # def recursion_limit(n=10):
 #     def decorator(f):

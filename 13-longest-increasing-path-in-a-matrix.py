@@ -22,17 +22,22 @@ def longest_path(matrix):
 
         for dr, dc in ((-1, 0), (1, 0), (0, -1), (0, 1)):
             nr, nc = r + dr, c + dc
-            if (nr, nc) in in_current_path:
-                continue
             if not (0 <= nr < len(matrix) and 0 <= nc < len(matrix[0])):
                 continue
             if matrix[nr][nc] > matrix[r][c]:
+                if (nr, nc) in in_current_path:
+                    # so it just never happens!
+                    # I was checking in_current_path before the mat > mat
+                    # doh.
+                    assert False
+                    continue
                 yield nr, nc
 
     def dfs(rc, matrix):
         longest = 1
 
         r, c = rc
+        # sub problems will never come back to rc, so this is not needed.
         in_current_path.add(rc)
 
         for nr, nc in get_neighbors(rc, matrix):
@@ -81,7 +86,7 @@ def longest_path2(matrix):
             combined_length = tail.length + path.length
             longer = combined_length > best_path.length
             same_length = combined_length == best_path.length
-            # This is irrelevant. 
+            # This is irrelevant.
             # If a tie being broken by this were to matter,
             # that path would have to end up longer
             # but it didn't, by definition!
@@ -154,6 +159,6 @@ matrix = [
 ]
 
 
-lp = longest_path2(matrix)
+lp = longest_path(matrix)
 print()
 print(lp)

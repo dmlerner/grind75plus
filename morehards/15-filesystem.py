@@ -1,5 +1,6 @@
 # https://leetcode.com/problems/design-in-memory-file-system/
 # 8:00
+# 9:09 passes
 """
 Design a data structure that simulates an in-memory file system.
 
@@ -79,7 +80,7 @@ class Inode:
     def __repr__(self):
         return "Inode(" + str(self.path_tail) + ")"
 
-    @show
+    # @show
     def ls(self, parts, i):
         assert parts[i] == self.path_tail
         if i == len(parts) - 1:
@@ -122,7 +123,7 @@ class FileSystem:
     def __init__(self):
         self.fs = Inode("/", True)
 
-    @show
+    # @show
     def ls(self, path):
         parts = FileSystem.parse(path)
         return self.fs.ls(parts, 0)
@@ -143,10 +144,6 @@ class FileSystem:
         return "FileSystem(" + repr(self.fs) + ")"
 
 
-print(FileSystem.parse("/"))
-assert FileSystem.parse("/") == ["/"]
-print(FileSystem.parse("/a"))
-assert FileSystem.parse("/a") == ["/", "a"]
 
 
 def test(commands, args, expects):
@@ -171,6 +168,8 @@ def verify(a, b):
         print("fail", a, b)
         assert False
 
+assert FileSystem.parse("/") == ["/"]
+assert FileSystem.parse("/a") == ["/", "a"]
 
 test(
     [

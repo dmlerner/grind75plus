@@ -154,3 +154,11 @@ def listify(f):
         return list(f(*args, **kwargs))
 
     return _f
+
+import time
+def benchmark(f):
+    start = time.time()
+    ret = f()
+    stop = time.time()
+    return stop - start, ret
+

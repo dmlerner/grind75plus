@@ -10,18 +10,18 @@ from itertools import chain
 WORD = '$'
 
 class TrieNode(dict):
-    def __init__(self):
-        super().__init__()
-        self.palindromic_continuations = None
+    # def __init__(self):
+    #     super().__init__()
+    #     self.palindromic_continuations = None
 
     def get_palindromes(self):
-        if self.palindromic_continuations:
+        try:
             return self.palindromic_continuations
+        except:
+            pass
         self.palindromic_continuations = get_palindromes(self)
         return self.palindromic_continuations
 
-    # def __repr__(self):
-    #     return 'T(' + str(self.id) + '|' + super().__repr__() +')'
 
 
 def build_trie(words):
@@ -63,7 +63,7 @@ assert not is_palindrome(['b', 'c'])
 
 def find_pairs(words):
     forward_trie = build_trie(words)
-    reverse_trie = build_trie(map(lambda x: x[::-1], words))
+    reverse_trie = build_trie([x[::-1] for x in words])
     index_by_word = { word: i for (i, word) in enumerate(words) }
     # simultaneously traversals
     # if hit end of word on one:
@@ -135,6 +135,7 @@ expected.sort()
 # words = ["abcd","dcba","lls","s","sssll", ""]
 # pairs = list(find_pairs(words))
 # assert expected == pairs
-
+def main():
+    print(benchmark(lambda: list(find_pairs(words))))
 # TODO: add case where pair[0] is longer than pair[1]
-print(benchmark(lambda: list(find_pairs(words))))
+main()

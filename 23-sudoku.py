@@ -55,7 +55,12 @@ class Board:
     @show
     def set(self, r, c, v):
         assert self.board[r][c] is None
-        assert v in self.get_options(r, c)
+        try:
+            assert v in self.get_options(r, c)
+        except:
+            options = self.get_options(r, c)
+            sl()
+            breakpoint()
         sub_options = self.get_sub_options(r, c)
         found = 0
         for o in sub_options:

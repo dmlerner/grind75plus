@@ -40,7 +40,7 @@ def get_words(trie, prefix=None):
     #     # yield trie[WORD]
     for letter in trie:
         if letter == WORD:
-            yield prefix, trie[WORD]
+            yield prefix[:], trie[WORD]
             continue
         prefix.append(letter)
         yield from get_words(trie[letter], prefix)
@@ -113,10 +113,10 @@ def find_pairs(words):
                 # look for odd palindromes
                 # TODO: optimize out loop?
                 # this is probably a special case of continuing palindromically....
-                for middle_letter in reverse:
-                    if WORD in reverse[middle_letter]:
-                        # odd palindrome
-                        yield [forward_index, index_by_word[reverse[middle_letter][WORD][::-1]]]
+                # for middle_letter in reverse:
+                #     if WORD in reverse[middle_letter]:
+                #         # odd palindrome
+                #         yield [forward_index, index_by_word[reverse[middle_letter][WORD][::-1]]]
 
             elif letter in reverse:
                 yield from dfs(forward[letter], reverse[letter])
@@ -130,14 +130,19 @@ def find_pairs(words):
 
 
 
-
 words = ["abcd","dcba","lls","s","sssll"]
+# words = ["sssll", "s"]
+# t = build_trie(words)
+# print([prefix for prefix, word in get_words(t)])
+# 1/0
+
 # words = ["lls", "s"]
 expected = [[0,1],[1,0],[3,2],[2,4]]
+# expected = []
 # expected = [[1, 0]]
 expected.sort()
 # words = ["abcd","dcba","lls","s","sssll", ""]
-pairs = list(find_pairs(words))
+pairs = list(map(list, {tuple(p) for p in find_pairs(words)}))
 pairs.sort()
 expected
 print(f'{expected=}')

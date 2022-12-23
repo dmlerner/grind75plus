@@ -117,20 +117,20 @@ def show_locals(n=1):
     print()
 sl = show_locals
 
-# def recursion_limit(n=10):
-#     def decorator(f):
-#         count = 0
+def call_limit(n=10):
+    def decorator(f):
+        count = 0
 
-#         @wraps(f)
-#         def _f(*args):
-#             nonlocal count
-#             assert count < n
-#             count += 1
-#             return f(*args)
+        @wraps(f)
+        def _f(*args):
+            nonlocal count
+            assert count < n
+            count += 1
+            return f(*args)
 
-#         return _f
+        return _f
 
-#     return decorator
+    return decorator
 
 class InfiniteRecursionException(Exception):
     pass

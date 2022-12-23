@@ -31,7 +31,7 @@ def build_trie(words):
         node[WORD] = word
     return trie
 
-@showlistify
+#/# @showlistify
 def get_words(trie, prefix=None):
     prefix = prefix or []
     assert isinstance(trie, TrieNode)
@@ -40,13 +40,14 @@ def get_words(trie, prefix=None):
     #     # yield trie[WORD]
     for letter in trie:
         if letter == WORD:
+            # TODO: optimize out copy?
             yield prefix[:], trie[WORD]
             continue
         prefix.append(letter)
         yield from get_words(trie[letter], prefix)
         prefix.pop()
 
-@showlistify
+#/# @showlistify
 def get_palindromes(trie):
     for prefix, word in get_words(trie):
         if is_palindrome(prefix):
@@ -67,7 +68,7 @@ def is_palindrome(word):
             return True
         i += 1
 
-@showlistify
+#/@showlistify
 def find_pairs(words):
     forward_trie = build_trie(words)
     print(f'{forward_trie =}')
@@ -80,27 +81,34 @@ def find_pairs(words):
     #   and other will hit it in one more step, odd pal
     #   else, not pal
 
-    @showlistify
+    #/@showlistify
     def dfs(forward, reverse):
+        if forward.id == 4 and reverse.id == 6:
+            breakpoint()
         assert isinstance(forward, TrieNode)
         assert isinstance(reverse, TrieNode)
 
         # If taking WORD from one, see if other continues palindromically
-        sl()
+        # sl()
         # breakpoint()
+
+        # This is hacky and I should be able to just avoid it outright...
+        tmp = set()
         if WORD in reverse:
             reverse_index = index_by_word[reverse[WORD][::-1]]
             # TODO: cache
             for word in get_palindromes(forward):
                 forward_index = index_by_word[word]
+                tmp.add(tuple([forward_index, reverse_index]))
                 yield [forward_index, reverse_index]
 
         if WORD in forward:
             forward_index = index_by_word[forward[WORD]]
-            # TODO: need to get palindromes of a child of reverse or something...
-            # BUG: this gets full words
             for word in get_palindromes(reverse):
                 reverse_index = index_by_word[word[::-1]]
+                if tuple([forward_index, reverse_index]) in tmp:
+                    continue
+                tmp.add(tuple([forward_index, reverse_index]))
                 yield [forward_index, reverse_index]
 
         for letter in forward:
@@ -109,14 +117,10 @@ def find_pairs(words):
                 if WORD in reverse:
                     # even palindrome
                     print('found even')
+                    if tuple([forward_index, index_by_word[reverse[WORD][::-1]]]) in tmp:
+                        continue
+                    # tmp.add(tuple([forward_index, index_by_word[reverse[WORD][::-1]]]))
                     yield [forward_index, index_by_word[reverse[WORD][::-1]]]
-                # look for odd palindromes
-                # TODO: optimize out loop?
-                # this is probably a special case of continuing palindromically....
-                # for middle_letter in reverse:
-                #     if WORD in reverse[middle_letter]:
-                #         # odd palindrome
-                #         yield [forward_index, index_by_word[reverse[middle_letter][WORD][::-1]]]
 
             elif letter in reverse:
                 yield from dfs(forward[letter], reverse[letter])
@@ -130,7 +134,8 @@ def find_pairs(words):
 
 
 
-words = ["abcd","dcba","lls","s","sssll"]
+# words = ["abcd","dcba","lls","s","sssll"]
+words = ["a","abc","aba",""]
 # words = ["sssll", "s"]
 # t = build_trie(words)
 # print([prefix for prefix, word in get_words(t)])

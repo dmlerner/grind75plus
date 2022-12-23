@@ -3,6 +3,7 @@
 # 2:05 gratuitious board class done
 # 2:50 naive dfs is clearly not going to cut it. gets 65/81 cells
 # 3:06 works pretty fast! now to submit...
+# 3:37 bugging caching of options but might be faster...
 
 from david import *
 
@@ -21,29 +22,37 @@ class Board:
         self.unset = set((r, c) for r in range(9) for c in range(9))
 
         self.board = [[None]*9 for c in range(9)]
+        self.options_cache = [[set(range(9))for c in range(9)] for r in range(9)]
         for r in range(9):
             for c in range(9):
                 try:
                     v = int(board[r][c]) - 1
                 except:
                     continue
+                # if (r, c) == (1, 5):
+                    # breakpoint()
                 self.set(r, c, v)
+                print(self.show())
 
     def get_sub_options(self, r, c):
         return [self.row_options[r], self.col_options[c], self.box_options[r//3][c//3]]
 
-    # @show
+    @show
     def get_options(self, r, c):
         if self.board[r][c] is not None:
             return set()
+        if self.options_cache[r][c] is not None:
+            return self.options_cache[r][c]
 
         # TODO: cache?
         sub_options = self.get_sub_options(r, c)
         sub_options.sort(key=len)
-        return sub_options[0].intersection(sub_options[1]).intersection(sub_options[2])
+        options = sub_options[0].intersection(sub_options[1]).intersection(sub_options[2])
+        self.options_cache[r][c] = options
+        return options
 
 
-    # @show
+    @show
     def set(self, r, c, v):
         assert self.board[r][c] is None
         assert v in self.get_options(r, c)
@@ -55,6 +64,10 @@ class Board:
                 o.remove(v)
         assert found
         self.board[r][c] = v
+        for (R, C) in self.get_related(r, c):
+            assert (R, C) != (r, c)
+            if v in self.options_cache[R][C]:
+                self.options_cache[R][C].remove(v)
         self.size += 1
         self.unset.remove((r, c))
 
@@ -65,6 +78,9 @@ class Board:
             assert v not in sub_option
             sub_option.add(v)
         self.board[r][c] = None
+        for (R, C) in self.get_related(r, c):
+            assert (R, C) != (r, c)
+            self.options_cache[R][C].add(v)
         self.size -= 1
         self.unset.add((r, c))
 
@@ -80,11 +96,11 @@ class Board:
     def get_box(self, r, c):
         box_r = r//3
         box_c = c//3
-        for r in range(box_r, box_r+3):
-            for c in range(box_c, box_c + 3):
-                yield r, c
+        for R in range(3*box_r, 3*box_r+3):
+            for C in range(3*box_c, 3*box_c + 3):
+                yield R, C
 
-    # @show
+    @show
     def set_determined(self):
         determined = set()
         for r in range(9):
@@ -97,7 +113,7 @@ class Board:
         return determined
 
 
-    # @show
+    @show
     def solve(self):
         if self.size == 81:
             raise SolvedException()
@@ -107,6 +123,7 @@ class Board:
             options = self.get_options(r, c)
             for v in options:
                 self.set(r, c, v)
+                # TODO: consider passing r, c
                 determined = self.set_determined()
                 self.solve()
                 self.remove(r, c)
@@ -146,11 +163,13 @@ def solve(board):
             else:
                 assert (r, c) not in b.unset
                 assert not b.get_options(r, c)
+    print('.'*100)
     try:
         b.solve()
     except SolvedException:
         pass
     b.format()
+    return b
 
 class SolvedException(Exception):
     pass
@@ -162,7 +181,16 @@ class Solution:
         """
         solve(board)
 
-
+# def get_box(r, c):
+#     box_r = r//3
+#     box_c = c//3
+#     for r in range(3*box_r, 3*box_r+3):
+#         for c in range(3*box_c, 3*box_c + 3):
+#             yield r, c
+# print(list(get_box(0, 0)))
+# print(list(get_box(7, 8)))
+# 1/0
 b = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]
 b = solve(b)
+print(b.show())
 

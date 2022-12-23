@@ -31,7 +31,7 @@ def build_trie(words):
         node[WORD] = word
     return trie
 
-#/# @showlistify
+@showlistify
 def get_words(trie, prefix=None):
     prefix = prefix or []
     assert isinstance(trie, TrieNode)
@@ -41,13 +41,13 @@ def get_words(trie, prefix=None):
     for letter in trie:
         if letter == WORD:
             # TODO: optimize out copy?
-            yield prefix[:], trie[WORD]
+            yield (prefix[:], trie[WORD])
             continue
         prefix.append(letter)
         yield from get_words(trie[letter], prefix)
         prefix.pop()
 
-#/# @showlistify
+@showlistify
 def get_palindromes(trie):
     for prefix, word in get_words(trie):
         if is_palindrome(prefix):
@@ -59,16 +59,18 @@ def is_palindrome(word):
         return True
     middle = len(word)//2
     even = len(word)%2 == 0
-    i = middle
+    i = 0
     while True:
         try:
-            if word[middle-i-even] != word[middle+1]:
+            if word[middle-i-even] != word[middle+i]:
                 return False
         except IndexError:
             return True
         i += 1
 
-#/@showlistify
+assert not is_palindrome(['b', 'c'])
+
+@showlistify
 def find_pairs(words):
     forward_trie = build_trie(words)
     print(f'{forward_trie =}')
@@ -81,10 +83,8 @@ def find_pairs(words):
     #   and other will hit it in one more step, odd pal
     #   else, not pal
 
-    #/@showlistify
+    @showlistify
     def dfs(forward, reverse):
-        if forward.id == 4 and reverse.id == 6:
-            breakpoint()
         assert isinstance(forward, TrieNode)
         assert isinstance(reverse, TrieNode)
 
@@ -93,6 +93,8 @@ def find_pairs(words):
         # breakpoint()
 
         # This is hacky and I should be able to just avoid it outright...
+        sl()
+        # breakpoint()
         tmp = set()
         if WORD in reverse:
             reverse_index = index_by_word[reverse[WORD][::-1]]
@@ -123,6 +125,7 @@ def find_pairs(words):
                     yield [forward_index, index_by_word[reverse[WORD][::-1]]]
 
             elif letter in reverse:
+                print('matched letter', letter)
                 yield from dfs(forward[letter], reverse[letter])
 
 
@@ -136,14 +139,16 @@ def find_pairs(words):
 
 # words = ["abcd","dcba","lls","s","sssll"]
 words = ["a","abc","aba",""]
-# words = ["sssll", "s"]
+words = ["sssll", "s"]
+words = ["a", "abc"]
 # t = build_trie(words)
 # print([prefix for prefix, word in get_words(t)])
 # 1/0
 
 # words = ["lls", "s"]
 expected = [[0,1],[1,0],[3,2],[2,4]]
-# expected = []
+expected = [[0,3],[3,0],[2,3],[3,2]]
+expected = []
 # expected = [[1, 0]]
 expected.sort()
 # words = ["abcd","dcba","lls","s","sssll", ""]

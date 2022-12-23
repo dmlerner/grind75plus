@@ -142,7 +142,8 @@ expected = [[0,1],[1,0],[3,2],[2,4]]
 # expected = [[1, 0]]
 expected.sort()
 # words = ["abcd","dcba","lls","s","sssll", ""]
-pairs = list(map(list, {tuple(p) for p in find_pairs(words)}))
+pairs = list(find_pairs(words))
+# pairs = list(map(list, {tuple(p) for p in find_pairs(words)}))
 pairs.sort()
 expected
 print(f'{expected=}')

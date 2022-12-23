@@ -2,6 +2,7 @@
 # 9:22
 # 9:51 handled happy path, buggy
 # 10:02 handled happy path. todo: different length parts
+# 12:22 134/136, 2 DLE
 
 from david import *
 from itertools import chain
@@ -16,7 +17,13 @@ class TrieNode(dict):
         self.id = TrieNode.id
         TrieNode.id += 1
         TrieNode.nodes.append(self)
-        self.palindromic_continuations = None
+        self.palindromic_continuations = set()
+
+    def get_palindromes(self):
+        if self.palindromic_continuations:
+            return self.palindromic_continuations
+        self.palindromic_continuations = get_palindromes(self)
+        return self.palindromic_continuations
 
     def __repr__(self):
         return 'T(' + str(self.id) + '|' + super().__repr__() +')'
@@ -99,14 +106,16 @@ def find_pairs(words):
         if WORD in reverse:
             reverse_index = index_by_word[reverse[WORD][::-1]]
             # TODO: cache
-            for word in get_palindromes(forward):
+            for word in forward.get_palindromes():
+                forward.palindromic_continuations.add(word)
                 forward_index = index_by_word[word]
                 tmp.add(tuple([forward_index, reverse_index]))
                 yield [forward_index, reverse_index]
 
         if WORD in forward:
             forward_index = index_by_word[forward[WORD]]
-            for word in get_palindromes(reverse):
+            for word in reverse.get_palindromes():
+                reverse.palindromic_continuations.add(word)
                 reverse_index = index_by_word[word[::-1]]
                 if tuple([forward_index, reverse_index]) in tmp:
                     continue

@@ -115,6 +115,7 @@ def show_locals(n=1):
         frame = frame.f_back
     print('\n'.join(map(str, frame.f_locals.items())))
     print()
+sl = show_locals
 
 # def recursion_limit(n=10):
 #     def decorator(f):
@@ -153,6 +154,14 @@ def listify(f):
     def _f(*args, **kwargs):
         return list(f(*args, **kwargs))
 
+    return _f
+
+def showlistify(f):
+    @show
+    @listify
+    @wraps(f)
+    def _f(*args, **kwargs):
+        return f(*args, **kwargs)
     return _f
 
 import time

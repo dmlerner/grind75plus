@@ -78,9 +78,10 @@ class Board:
     @show
     def set_determined(self, r, c):
         determined = set([(r, c)])
-        frontier = deque([(r, c)])
+        # this could be a stack just as easily...
+        frontier = [(r, c)]
         while frontier:
-            active = frontier.popleft()
+            active = frontier.pop()
             for related in self.get_related(*active):
                 if related in determined:
                     continue
@@ -100,6 +101,8 @@ class Board:
     def solve(self):
         if self.size == 81:
             raise SolvedException()
+        # if self.size == 80:
+        #     breakpoint()
         self.count += 1
         for (r, c) in self.unset:
             assert self.board[r][c] is None
@@ -107,18 +110,20 @@ class Board:
             # if (r, c) == (8, 0):
             #     sl()
             #     breakpoint()
-            if options == {2, 3, 5, 7} and self.size == 47 and (r, c) == (8, 0):
-                breakpoint()
+            # if options == {2, 3, 5, 7} and self.size == 47 and (r, c) == (8, 0):
+            #     breakpoint()
             for v in options:
                 self.set(r, c, v)
                 # TODO: consider passing r, c
                 determined = self.set_determined(r, c)
                 self.solve()
                 # Not needed: this will be in determined
-                # self.remove(r, c)
                 assert (r, c) in determined
                 for (dr, dc) in determined:
+                    if (dr, dc) == (r, c):
+                        continue
                     self.remove(dr, dc)
+                self.remove(r, c)
 
         # if self.count % 10000 == 0:
         #     print(self.count, self.size)
@@ -181,7 +186,7 @@ class Solution:
 # print(list(get_box(7, 8)))
 # 1/0
 b = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]
-# b = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
+b = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
 b = solve(b)
 print(b.show())
 

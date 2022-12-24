@@ -105,9 +105,9 @@ class Board:
     #@show
     def solve(self):
         self.count += 1
-        print(self.count, self.novel, self.size)
-        if self.novel == 4:
-            breakpoint()
+        # print(self.count, self.novel, self.size)
+       # if self.novel == 4:
+        #     breakpoint()
         self.novel += 1
         # if self.count % 20 == 0:
         #     for a in self.attempts:
@@ -120,32 +120,48 @@ class Board:
             # print('cycle')
             # raise SolvedException()
         self.attempts.append(self.show())
-        if self.size == 81:
-            raise SolvedException()
+        # if self.size == 81:
+        #     raise SolvedException()
         # if self.count > 10000:
         #     raise SolvedException()
         # if self.size == 80:
         #     breakpoint()
+        randomize = False
+        before = self.size
+        max_size = self.size
         for (r, c) in self.unset:
             assert self.board[r][c] is None
             options = self.options[r][c]
             if not options:
-                return
+                return True
             # should I remove from options if no progress?
             while options:
-                v = random.choice(tuple(options))
-                # v = options.pop()
-                # make invariants happy
-                # options.add(v)
+                if randomize:
+                    v = random.choice(tuple(options))
+                else:
+                    v = options.pop()
+                    # make invariants happy
+                    options.add(v)
                 self.set(r, c, v)
+                # before = self.size
                 determined = self.set_determined(r, c)
-                self.solve()
+                max_size = max(self.size, max_size)
+                if self.size == 81:
+                    raise SolvedException()
+                useless = self.solve()
+                # after = self.size
+
                 # Not needed: this will be in determined
                 assert (r, c) in determined
                 for (dr, dc) in determined:
                     self.remove(dr, dc)
+                if useless:
+                    # unclear that it gets put back ever, if that's a thing it should have...
+                    options.discard(v)
                 # self.remove(r, c)
-
+        after = self.size
+        assert before == after
+        return max_size == before
 
 
     def show(self):
@@ -207,8 +223,8 @@ class Solution:
 hard = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
 # I was just getting lucky :/
 easy = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]
-b = hard
 b = easy
+b = hard
 b = solve(b)
 print(b.show())
 

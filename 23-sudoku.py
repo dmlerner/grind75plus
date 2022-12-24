@@ -7,22 +7,17 @@
 
 from david import *
 
+from collections import deque
+
 class Board:
     def __init__(self, board):
         self._board = board
         self.count = 0
-        # self.options = [[set(range(9)) for c in range(9)] for r in range(9)]
-        # self.rows = [set() for i in range(9)]
-        self.row_options = [set(range(9)) for r in range(9)]
-        # self.cols = [set() for i in range(9)]
-        self.col_options =  [set(range(9)) for c in range(9)]
-        # self.boxes = [[set() for i in range(3)] for j in range(3)]
-        self.box_options = [[set(range(9)) for i in range(3)] for j in range(3)]
+        self.options = [[set(range(9)) for c in range(9)] for r in range(9)]
         self.size = 0
         self.unset = set((r, c) for r in range(9) for c in range(9))
 
         self.board = [[None]*9 for c in range(9)]
-        self.options_cache = [[set(range(9))for c in range(9)] for r in range(9)]
         for r in range(9):
             for c in range(9):
                 try:
@@ -34,69 +29,61 @@ class Board:
                 self.set(r, c, v)
                 print(self.show())
 
-    def get_sub_options(self, r, c):
-        return [self.row_options[r], self.col_options[c], self.box_options[r//3][c//3]]
 
     @show
     def get_options(self, r, c):
         if self.board[r][c] is not None:
             return set()
-        if self.options_cache[r][c] is not None:
-            return self.options_cache[r][c]
+        # TODO: can I actually get away with this?
+        # Did I just change to the other strategy so slowly I didn't notice?
+        return self.options[r][c]
+    '''
+        if self.options[r][c] is not None:
+            return self.options[r][c]
 
         # TODO: cache?
         sub_options = self.get_sub_options(r, c)
         sub_options.sort(key=len)
         options = sub_options[0].intersection(sub_options[1]).intersection(sub_options[2])
-        self.options_cache[r][c] = options
+        self.options[r][c] = options
         return options
+    '''
 
 
     @show
     def set(self, r, c, v):
         assert self.board[r][c] is None
         try:
-            assert v in self.get_options(r, c)
+            assert v in self.options[r][c]
         except:
-            options = self.get_options(r, c)
+            options = self.options[r][c]
             sl()
             breakpoint()
-        sub_options = self.get_sub_options(r, c)
-        found = 0
-        for o in sub_options:
-            if v in o:
-                found += 1
-                o.remove(v)
-        assert found
         self.board[r][c] = v
         for (R, C) in self.get_related(r, c):
-            assert (R, C) != (r, c)
-            if v in self.options_cache[R][C]:
-                self.options_cache[R][C].remove(v)
+            options = self.get_options(R, C)
+            if v in options:
+                options.remove(v)
         self.size += 1
         self.unset.remove((r, c))
 
+    @show
     def remove(self, r, c):
         assert self.board[r][c] is not None
         v = self.board[r][c]
-        for sub_option in self.get_sub_options(r, c):
-            assert v not in sub_option
-            sub_option.add(v)
         self.board[r][c] = None
         for (R, C) in self.get_related(r, c):
-            assert (R, C) != (r, c)
-            self.options_cache[R][C].add(v)
+            self.options[R][C].add(v)
         self.size -= 1
         self.unset.add((r, c))
 
+    @showlistify
     def get_related(self, r, c):
         for C in range(9):
-            if C != c:
-                yield r, C
+            yield r, C
         for R in range(9):
-            if R != r:
-                yield R, c
-        yield from filter(lambda rc: rc != (r, c), self.get_box(r, c))
+            yield R, c
+        yield from self.get_box(r, c)
 
     def get_box(self, r, c):
         box_r = r//3
@@ -106,15 +93,22 @@ class Board:
                 yield R, C
 
     @show
-    def set_determined(self):
+    def set_determined(self, r, c):
         determined = set()
-        for r in range(9):
-            for c in range(9):
-                options = self.get_options(r, c)
+        frontier = deque([(r, c)])
+        while frontier:
+            active = frontier.popleft()
+            for related in self.get_related(*active):
+                if related in determined:
+                    continue
+                R, C = related
+                options = self.options[R][C]
                 if len(options) == 1:
-                    option = options.pop()
-                    determined.add((r, c))
-                    self.set(r, c, option)
+                    # don't pop - throws off invariants
+                    option = tuple(options)[0]
+                    determined.add(related)
+                    frontier.append(related)
+                    self.set(*related, option)
         return determined
 
 
@@ -129,7 +123,7 @@ class Board:
             for v in options:
                 self.set(r, c, v)
                 # TODO: consider passing r, c
-                determined = self.set_determined()
+                determined = self.set_determined(r, c)
                 self.solve()
                 self.remove(r, c)
                 for (dr, dc) in determined:

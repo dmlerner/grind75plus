@@ -1,0 +1,164 @@
+10000 77
+77
+548637021
+670521348
+31204856.
+426875130
+153206487
+087413256
+83475261.
+761380..5
+205164873
+
+         3411674 function calls (3401635 primitive calls) in 0.784 seconds
+
+   Ordered by: internal time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+   151296    0.173    0.000    0.428    0.000 23-sudoku.py:60(get_related_empty)
+  1123332    0.133    0.000    0.197    0.000 23-sudoku.py:67(_get_related)
+   813267    0.107    0.000    0.107    0.000 23-sudoku.py:62(<lambda>)
+     9998    0.099    0.000    0.415    0.000 23-sudoku.py:46(remove)
+   219956    0.070    0.000    0.157    0.000 23-sudoku.py:64(get_related_nonempty)
+   401190    0.064    0.000    0.064    0.000 23-sudoku.py:74(get_box)
+   269946    0.037    0.000    0.037    0.000 23-sudoku.py:65(<lambda>)
+  10002/1    0.032    0.000    0.781    0.781 23-sudoku.py:104(solve)
+    10001    0.020    0.000    0.166    0.000 23-sudoku.py:82(set_determined)
+    10075    0.020    0.000    0.168    0.000 23-sudoku.py:34(set)
+   240919    0.014    0.000    0.014    0.000 {method 'discard' of 'set' objects}
+    80034    0.006    0.000    0.006    0.000 {method 'add' of 'set' objects}
+    30238    0.002    0.000    0.002    0.000 {built-in method builtins.len}
+    10075    0.001    0.000    0.001    0.000 {method 'remove' of 'set' objects}
+    10075    0.001    0.000    0.001    0.000 {method 'clear' of 'set' objects}
+    10048    0.001    0.000    0.001    0.000 {method 'pop' of 'list' objects}
+    10001    0.001    0.000    0.001    0.000 {method 'pop' of 'set' objects}
+      7/2    0.000    0.000    0.001    0.001 <frozen importlib._bootstrap>:1167(_find_and_load)
+        3    0.000    0.000    0.000    0.000 {built-in method marshal.loads}
+        9    0.000    0.000    0.000    0.000 {built-in method builtins.__build_class__}
+        1    0.000    0.000    0.001    0.001 23-sudoku.py:13(__init__)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1604(find_spec)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1056(_find_spec)
+       13    0.000    0.000    0.000    0.000 {built-in method posix.stat}
+        4    0.000    0.000    0.000    0.000 {built-in method _imp.create_builtin}
+        1    0.000    0.000    0.001    0.001 random.py:1(<module>)
+        3    0.000    0.000    0.000    0.000 {built-in method io.open_code}
+        1    0.000    0.000    0.782    0.782 23-sudoku.py:152(solve)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1007(get_code)
+        1    0.000    0.000    0.000    0.000 david.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 23-sudoku.py:139(format)
+      7/2    0.000    0.000    0.001    0.001 <frozen importlib._bootstrap>:666(_load_unlocked)
+       41    0.000    0.000    0.000    0.000 {built-in method builtins.getattr}
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:179(_get_module_lock)
+    54/45    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+        1    0.000    0.000    0.784    0.784 23-sudoku.py:1(<module>)
+       38    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:126(_path_join)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:493(_init_module_attrs)
+       38    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:128(<listcomp>)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1464(_get_spec)
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:437(cache_from_source)
+        3    0.000    0.000    0.000    0.000 {method 'read' of '_io.BufferedReader' objects}
+      7/2    0.000    0.000    0.001    0.001 <frozen importlib._bootstrap>:1122(_find_and_load_unlocked)
+      4/1    0.000    0.000    0.784    0.784 {built-in method builtins.exec}
+        4    0.000    0.000    0.000    0.000 {built-in method _imp.exec_builtin}
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:566(module_from_spec)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:100(acquire)
+        7    0.000    0.000    0.000    0.000 __init__.py:89(find_spec)
+        1    0.000    0.000    0.000    0.000 {function Random.seed at 0x7f9c3dee6fc0}
+      3/2    0.000    0.000    0.001    0.001 <frozen importlib._bootstrap_external>:934(exec_module)
+       81    0.000    0.000    0.000    0.000 23-sudoku.py:133(<lambda>)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:169(__enter__)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:125(release)
+       45    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:244(_verbose_message)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:748(find_spec)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1127(get_data)
+       82    0.000    0.000    0.000    0.000 23-sudoku.py:18(<genexpr>)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:778(spec_from_file_location)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1599(_get_spec)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:567(_get_cached)
+        1    0.000    0.000    0.000    0.000 bisect.py:1(<module>)
+        3    0.000    0.000    0.000    0.000 {method '__exit__' of '_io._IOBase' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method math.exp}
+        4    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:422(spec_from_loader)
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:132(_path_split)
+     14/4    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:233(_call_with_frames_removed)
+        3    0.000    0.000    0.000    0.000 {built-in method posix.getcwd}
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.print}
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:727(_compile_bytecode)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:198(cb)
+       82    0.000    0.000    0.000    0.000 {method 'rstrip' of 'str' objects}
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:642(_classify_pyc)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:71(__init__)
+        9    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1421(_path_importer_cache)
+        7    0.000    0.000    0.000    0.000 {method 'format' of 'str' objects}
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:173(__exit__)
+        1    0.000    0.000    0.000    0.000 david.py:1(ListNode)
+        1    0.000    0.000    0.000    0.000 random.py:103(Random)
+       20    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1032(__exit__)
+        9    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:84(_unpack_uint32)
+        1    0.000    0.000    0.000    0.000 random.py:119(__init__)
+       27    0.000    0.000    0.000    0.000 {method 'rpartition' of 'str' objects}
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1496(find_spec)
+        1    0.000    0.000    0.000    0.000 random.py:128(seed)
+       13    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:140(_path_stat)
+       47    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        6    0.000    0.000    0.000    0.000 {built-in method builtins.max}
+       10    0.000    0.000    0.000    0.000 23-sudoku.py:134(<genexpr>)
+       34    0.000    0.000    0.000    0.000 {built-in method _imp.acquire_lock}
+        7    0.000    0.000    0.000    0.000 {built-in method _imp.is_builtin}
+       26    0.000    0.000    0.000    0.000 {built-in method builtins.hasattr}
+        1    0.000    0.000    0.000    0.000 23-sudoku.py:16(<listcomp>)
+       20    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1028(__enter__)
+        4    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:254(_requires_builtin_wrapper)
+        1    0.000    0.000    0.000    0.000 {built-in method posix.register_at_fork}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:392(cached)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:357(__init__)
+       34    0.000    0.000    0.000    0.000 {built-in method _imp.release_lock}
+       12    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:134(<genexpr>)
+        4    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:772(create_module)
+        7    0.000    0.000    0.000    0.000 {built-in method builtins.locals}
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:405(parent)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:675(_validate_timestamp_pyc)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:599(_check_name_wrapper)
+       14    0.000    0.000    0.000    0.000 {built-in method _thread.allocate_lock}
+        1    0.000    0.000    0.000    0.000 23-sudoku.py:132(show)
+       21    0.000    0.000    0.000    0.000 {method 'get' of 'dict' objects}
+       17    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+       14    0.000    0.000    0.000    0.000 {method '__exit__' of '_thread.lock' objects}
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:159(_path_isfile)
+        1    0.000    0.000    0.000    0.000 random.py:215(__init_subclass__)
+       14    0.000    0.000    0.000    0.000 {built-in method _thread.get_ident}
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1146(path_stats)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:922(find_spec)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:165(__init__)
+        4    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:780(exec_module)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:150(_path_is_mode_type)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:48(_new_module)
+        3    0.000    0.000    0.000    0.000 {built-in method _imp.find_frozen}
+        1    0.000    0.000    0.000    0.000 23-sudoku.py:20(<listcomp>)
+        1    0.000    0.000    0.000    0.000 23-sudoku.py:12(Board)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1097(__init__)
+        7    0.000    0.000    0.000    0.000 {method 'pop' of 'dict' objects}
+        9    0.000    0.000    0.000    0.000 {built-in method from_bytes}
+        1    0.000    0.000    0.000    0.000 david.py:54(TreeNode)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:180(_path_isabs)
+        6    0.000    0.000    0.000    0.000 {method 'rfind' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 random.py:784(SystemRandom)
+        2    0.000    0.000    0.000    0.000 {built-in method math.log}
+        9    0.000    0.000    0.000    0.000 {built-in method posix.fspath}
+        3    0.000    0.000    0.000    0.000 {method 'startswith' of 'str' objects}
+        3    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:413(has_location)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:71(_relax_case)
+        3    0.000    0.000    0.000    0.000 {built-in method _imp._fix_co_filename}
+        7    0.000    0.000    0.000    0.000 __init__.py:96(<lambda>)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        4    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:797(is_package)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1122(get_filename)
+        1    0.000    0.000    0.000    0.000 23-sudoku.py:172(Solution)
+        1    0.000    0.000    0.000    0.000 david.py:99(Node)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:931(create_module)
+        1    0.000    0.000    0.000    0.000 {built-in method math.sqrt}
+        1    0.000    0.000    0.000    0.000 23-sudoku.py:169(SolvedException)
+        1    0.000    0.000    0.000    0.000 david.py:135(InfiniteRecursionException)
+
+

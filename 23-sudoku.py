@@ -7,17 +7,19 @@
 
 from david import *
 
-from collections import deque
+import random
 
 class Board:
     def __init__(self, board):
         self._board = board
         self.count = 0
+        self.novel = 0
         self.options = [[set(range(9)) for c in range(9)] for r in range(9)]
         self.size = 0
         self.unset = set((r, c) for r in range(9) for c in range(9))
 
         self.board = [[None]*9 for c in range(9)]
+        self.attempts = []
         for r in range(9):
             for c in range(9):
                 try:
@@ -102,30 +104,48 @@ class Board:
 
     #@show
     def solve(self):
+        self.count += 1
+        print(self.count, self.novel, self.size)
+        if self.novel == 4:
+            breakpoint()
+        self.novel += 1
+        # if self.count % 20 == 0:
+        #     for a in self.attempts:
+        #         print(a)
+        #     1/0
+
+        # if self.show() in self.attempts:
+        #     return
+        # self.novel += 1
+            # print('cycle')
+            # raise SolvedException()
+        self.attempts.append(self.show())
         if self.size == 81:
             raise SolvedException()
+        # if self.count > 10000:
+        #     raise SolvedException()
         # if self.size == 80:
         #     breakpoint()
-        self.count += 1
         for (r, c) in self.unset:
             assert self.board[r][c] is None
-            options = tuple(self.options[r][c])
-            for v in options:
-                if v not in self.options[r][c]:
-                    continue
+            options = self.options[r][c]
+            if not options:
+                return
+            # should I remove from options if no progress?
+            while options:
+                v = random.choice(tuple(options))
+                # v = options.pop()
+                # make invariants happy
+                # options.add(v)
                 self.set(r, c, v)
                 determined = self.set_determined(r, c)
                 self.solve()
                 # Not needed: this will be in determined
                 assert (r, c) in determined
                 for (dr, dc) in determined:
-                    if (dr, dc) == (r, c):
-                        continue
                     self.remove(dr, dc)
-                self.remove(r, c)
+                # self.remove(r, c)
 
-        if self.count % 10000 == 0:
-            print(self.count, self.size)
 
 
     def show(self):
@@ -185,9 +205,10 @@ class Solution:
 # print(list(get_box(7, 8)))
 # 1/0
 hard = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
+# I was just getting lucky :/
 easy = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]
-b = easy
 b = hard
+b = easy
 b = solve(b)
 print(b.show())
 

@@ -27,10 +27,10 @@ class Board:
                 # if (r, c) == (1, 5):
                     # breakpoint()
                 self.set(r, c, v)
-                print(self.show())
+                # print(self.show())
 
 
-    @show
+    #@show
     def get_options(self, r, c):
         if self.board[r][c] is not None:
             return set()
@@ -50,7 +50,7 @@ class Board:
     '''
 
 
-    @show
+    #@show
     def set(self, r, c, v):
         assert self.board[r][c] is None
         try:
@@ -67,7 +67,7 @@ class Board:
         self.size += 1
         self.unset.remove((r, c))
 
-    @show
+    #@show
     def remove(self, r, c):
         assert self.board[r][c] is not None
         v = self.board[r][c]
@@ -77,7 +77,7 @@ class Board:
         self.size -= 1
         self.unset.add((r, c))
 
-    @showlistify
+    #@showlistify
     def get_related(self, r, c):
         for C in range(9):
             yield r, C
@@ -92,7 +92,7 @@ class Board:
             for C in range(3*box_c, 3*box_c + 3):
                 yield R, C
 
-    @show
+    #@show
     def set_determined(self, r, c):
         determined = set()
         frontier = deque([(r, c)])
@@ -112,7 +112,7 @@ class Board:
         return determined
 
 
-    @show
+    #@show
     def solve(self):
         if self.size == 81:
             raise SolvedException()
@@ -162,7 +162,7 @@ def solve(board):
             else:
                 assert (r, c) not in b.unset
                 assert not b.get_options(r, c)
-    print('.'*100)
+    # print('.'*100)
     try:
         b.solve()
     except SolvedException:
@@ -190,6 +190,7 @@ class Solution:
 # print(list(get_box(7, 8)))
 # 1/0
 b = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]
+b = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
 b = solve(b)
 print(b.show())
 

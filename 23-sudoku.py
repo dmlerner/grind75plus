@@ -30,38 +30,43 @@ class Board:
                 # print(self.show())
 
 
-    @show
-    def get_options(self, r, c):
-        if self.board[r][c] is not None:
-            return set()
-        return self.options[r][c]
-
-    @show
+    #@show
     def set(self, r, c, v):
         assert self.board[r][c] is None
         assert v in self.options[r][c]
         self.board[r][c] = v
-        for (R, C) in self.get_related(r, c):
-            # need to remove the option even if R,C is occupied
-            # do, don't call get_options(R, C)
+        self.options[r][c].clear()# = set()
+        for (R, C) in self.get_related_empty(r, c):
             options = self.options[R][C]
             if v in options:
                 options.remove(v)
         self.size += 1
         self.unset.remove((r, c))
 
-    @show
+    #@show
     def remove(self, r, c):
         assert self.board[r][c] is not None
         v = self.board[r][c]
         self.board[r][c] = None
-        for (R, C) in self.get_related(r, c):
+        assert self.options[r][c] == set()
+        # TODO: coudl be a performance problem to iterate both
+        for (R, C) in self.get_related_empty(r, c):
             self.options[R][C].add(v)
+        for (R, C) in self.get_related_nonempty(r, c):
+            if self.board[R][C] in self.options[r][c]:
+                self.options[r][c].remove(self.board[R][C])
         self.size -= 1
         self.unset.add((r, c))
 
-    @showlistify
-    def get_related(self, r, c):
+    #@showlistify
+    def get_related_empty(self, r, c):
+        # get unoccupied and related
+        yield from filter(lambda rc: self.board[rc[0]][rc[1]] is None, self._get_related(r, c))
+
+    def get_related_nonempty(self, r, c):
+        yield from filter(lambda rc: self.board[rc[0]][rc[1]] is not None, self._get_related(r, c))
+
+    def _get_related(self, r, c):
         for C in range(9):
             yield r, C
         for R in range(9):
@@ -75,19 +80,19 @@ class Board:
             for C in range(3*box_c, 3*box_c + 3):
                 yield R, C
 
-    @show
+    #@show
     def set_determined(self, r, c):
         determined = set([(r, c)])
         # this could be a stack just as easily...
         frontier = [(r, c)]
         while frontier:
             active = frontier.pop()
-            for related in self.get_related(*active):
+            # want related and unset
+            for related in self.get_related_empty(*active):
                 if related in determined:
                     continue
                 R, C = related
-                # use get_options so if related is occupied, we don't use it
-                options = self.get_options(R, C)
+                options = self.options[R][C]
                 if len(options) == 1:
                     # don't pop - throws off invariants
                     option = tuple(options)[0]
@@ -97,7 +102,7 @@ class Board:
         return determined
 
 
-    @show
+    #@show
     def solve(self):
         if self.size == 81:
             raise SolvedException()
@@ -106,15 +111,11 @@ class Board:
         self.count += 1
         for (r, c) in self.unset:
             assert self.board[r][c] is None
-            options = self.get_options(r, c)
-            # if (r, c) == (8, 0):
-            #     sl()
-            #     breakpoint()
-            # if options == {2, 3, 5, 7} and self.size == 47 and (r, c) == (8, 0):
-            #     breakpoint()
+            options = tuple(self.options[r][c])
             for v in options:
+                if v not in self.options[r][c]:
+                    continue
                 self.set(r, c, v)
-                # TODO: consider passing r, c
                 determined = self.set_determined(r, c)
                 self.solve()
                 # Not needed: this will be in determined
@@ -157,7 +158,7 @@ def solve(board):
                 assert (r, c) in b.unset
             else:
                 assert (r, c) not in b.unset
-                assert not b.get_options(r, c)
+                assert not b.options[r][c]
     # print('.'*100)
     try:
         b.solve()
@@ -186,7 +187,7 @@ class Solution:
 # print(list(get_box(7, 8)))
 # 1/0
 b = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]
-b = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
+# b = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
 b = solve(b)
 print(b.show())
 

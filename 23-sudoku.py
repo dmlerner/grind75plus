@@ -30,44 +30,27 @@ class Board:
                 # print(self.show())
 
 
-    #@show
+    @show
     def get_options(self, r, c):
         if self.board[r][c] is not None:
             return set()
-        # TODO: can I actually get away with this?
-        # Did I just change to the other strategy so slowly I didn't notice?
         return self.options[r][c]
-    '''
-        if self.options[r][c] is not None:
-            return self.options[r][c]
 
-        # TODO: cache?
-        sub_options = self.get_sub_options(r, c)
-        sub_options.sort(key=len)
-        options = sub_options[0].intersection(sub_options[1]).intersection(sub_options[2])
-        self.options[r][c] = options
-        return options
-    '''
-
-
-    #@show
+    @show
     def set(self, r, c, v):
         assert self.board[r][c] is None
-        try:
-            assert v in self.options[r][c]
-        except:
-            options = self.options[r][c]
-            sl()
-            breakpoint()
+        assert v in self.options[r][c]
         self.board[r][c] = v
         for (R, C) in self.get_related(r, c):
-            options = self.get_options(R, C)
+            # need to remove the option even if R,C is occupied
+            # do, don't call get_options(R, C)
+            options = self.options[R][C]
             if v in options:
                 options.remove(v)
         self.size += 1
         self.unset.remove((r, c))
 
-    #@show
+    @show
     def remove(self, r, c):
         assert self.board[r][c] is not None
         v = self.board[r][c]
@@ -77,7 +60,7 @@ class Board:
         self.size -= 1
         self.unset.add((r, c))
 
-    #@showlistify
+    @showlistify
     def get_related(self, r, c):
         for C in range(9):
             yield r, C
@@ -92,9 +75,9 @@ class Board:
             for C in range(3*box_c, 3*box_c + 3):
                 yield R, C
 
-    #@show
+    @show
     def set_determined(self, r, c):
-        determined = set()
+        determined = set([(r, c)])
         frontier = deque([(r, c)])
         while frontier:
             active = frontier.popleft()
@@ -102,7 +85,8 @@ class Board:
                 if related in determined:
                     continue
                 R, C = related
-                options = self.options[R][C]
+                # use get_options so if related is occupied, we don't use it
+                options = self.get_options(R, C)
                 if len(options) == 1:
                     # don't pop - throws off invariants
                     option = tuple(options)[0]
@@ -112,20 +96,27 @@ class Board:
         return determined
 
 
-    #@show
+    @show
     def solve(self):
         if self.size == 81:
             raise SolvedException()
         self.count += 1
         for (r, c) in self.unset:
-            # error: self.options changes in sub calls?
+            assert self.board[r][c] is None
             options = self.get_options(r, c)
+            # if (r, c) == (8, 0):
+            #     sl()
+            #     breakpoint()
+            if options == {2, 3, 5, 7} and self.size == 47 and (r, c) == (8, 0):
+                breakpoint()
             for v in options:
                 self.set(r, c, v)
                 # TODO: consider passing r, c
                 determined = self.set_determined(r, c)
                 self.solve()
-                self.remove(r, c)
+                # Not needed: this will be in determined
+                # self.remove(r, c)
+                assert (r, c) in determined
                 for (dr, dc) in determined:
                     self.remove(dr, dc)
 
@@ -190,7 +181,7 @@ class Solution:
 # print(list(get_box(7, 8)))
 # 1/0
 b = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]
-b = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
+# b = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
 b = solve(b)
 print(b.show())
 

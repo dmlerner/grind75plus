@@ -171,3 +171,7 @@ def benchmark(f):
     stop = time.time()
     return stop - start, ret
 
+def debug(*args, **kwargs):
+    if debug.ENABLE:
+        print(*args, **kwargs)
+debug.ENABLE = True

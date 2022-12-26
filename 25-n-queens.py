@@ -14,6 +14,8 @@ def format(board):
 
 def _find_boards(n):
     board = [[None]*n for i in range(n)]
+    rows = set(range(n))
+    cols = set(range(n))
     def dfs(r, c, remaining):
         '''
         attempt to place a queen at r, c
@@ -25,20 +27,22 @@ def _find_boards(n):
             return
 
         board[r][c] = QUEEN
+        rows.remove(r)
+        cols.remove(c)
         remaining -= 1
         if is_valid(board):
             if remaining == 0:
                 yield format(board)
             else:
-                for R in range(n):
-                    for C in range(n):
-                        # optimization. unclear if it skips solutions.
+                for R in rows:
+                    for C in cols:
+                        # optimization. apparently doesn't skip solutions.
                         if (R, C) > (r, c):
                             yield from filter(bool, dfs(R, C, remaining))
-                    # if (solution := ):
-                    #     yield solution
 
         board[r][c] = None
+        rows.add(r)
+        cols.add(c)
 
     for c in range(n):
         yield from dfs(0, c, n)

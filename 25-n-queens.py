@@ -19,7 +19,7 @@ def _find_boards(n):
         attempt to place a queen at r, c
         '''
         assert remaining >= 1
-        assert sum(row.count(QUEEN) for row in board) <= n
+        # assert sum(row.count(QUEEN) for row in board) <= n
 
         if board[r][c] is not None:
             return
@@ -40,9 +40,8 @@ def _find_boards(n):
 
         board[r][c] = None
 
-    for r in range(n):
-        for c in range(n):
-            yield from dfs(r, c, n)
+    for c in range(n):
+        yield from dfs(0, c, n)
 
 def find_boards(n):
     boards = set()
@@ -111,16 +110,14 @@ class Solution:
 # assert not is_valid(from_leetcode([".Q..","...Q","Q...","..Q."]))
 # 1/0
 
-for i in (4,):#range(5):
-    boards = find_boards(i)
-    print(boards)
-    assert boards
-    for board in boards:
-        assert is_valid(from_leetcode(leetcode_format(board)))
+for i in range(10):#range(5):
+    print(f'{i=}')
+    t, n = benchmark(lambda: find_boards(i))
+    print(t, len(n))
 
 
-assert list(rising_diagonal(3, 0)) == [(2,0), (1,1), (0,2)]
-assert list(falling_diagonal(3, 0)) == [(0, 0), (1, 1), (2,2)]
-assert list(falling_diagonal(4, -1))  == [(0,1),(1,2),(2,3)]
+# assert list(rising_diagonal(3, 0)) == [(2,0), (1,1), (0,2)]
+# assert list(falling_diagonal(3, 0)) == [(0, 0), (1, 1), (2,2)]
+# assert list(falling_diagonal(4, -1))  == [(0,1),(1,2),(2,3)]
 
 

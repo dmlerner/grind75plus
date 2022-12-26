@@ -18,36 +18,33 @@ def format(board):
 def _find_boards(n):
     board = [[None] * n for i in range(n)]
     cols = set(range(n))
-    diagonals = list(range(0, 2*n-1))
-    antidiagonals = list(range(-n+1, n))
+    diagonals = {i:True for i in range(0, 2*n-1)}
+    antidiagonals = {i: True for i in range(-n+1, n)}
 
-    def dfs(r, c):
+    # @showlistify
+    def dfs(r):
         """
         attempt to place a queen at r, c
         """
-        cols.remove(c)
-        diagonals[r+c] = False
-        antidiagonals[r-c] = False
 
-        board[r][c] = QUEEN
+        for C in tuple(cols):
+            if diagonals[r+C] and antidiagonals[r-C]:
+                assert board[r][C] is None
+                board[r][C] = QUEEN
+                cols.remove(C)
+                if not cols:
+                    yield format(board)
 
-        if not cols:
-            yield format(board)
-        else:
-            R = r + 1
-            # for R, C in product(rows, cols):
-            for C in cols:
-                if diagonals[R+C] and antidiagonals[R-C]:
-                    yield from dfs(R, C)
+                diagonals[r+C] = False
+                antidiagonals[r-C] = False
+                yield from dfs(r+1)
+                board[r][C] = None
 
-        board[r][c] = None
+                cols.add(C)
+                diagonals[r+C] = True
+                antidiagonals[r-C] = True
 
-        cols.add(c)
-        diagonals[r+c] = True
-        antidiagonals[r-c] = True
-
-    for c in range(n):
-        yield from dfs(0, c)
+    yield from dfs(0)
 
 
 def find_boards(n):
@@ -65,8 +62,7 @@ class Solution:
     def solveNQueens(self, n: int) -> List[List[str]]:
         return list(map(leetcode_format, find_boards(n)))
 
-for i in range(10):  # range(5):
-# for i in (8,):
-    print(f"{i=}")
+# for i in range(10):  # range(5):
+for i in (5,):
     t, n = benchmark(lambda: find_boards(i))
-    print(t, len(n))
+    print(t, n)

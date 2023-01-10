@@ -1,5 +1,6 @@
 from david import *
 
+
 def max_depth(t):
     if t is None:
         return 0

@@ -1,6 +1,7 @@
 from david import show
 from collections import deque, defaultdict
 
+
 class Trie:
     def __hash__(self):
         return hash(id(self))
@@ -18,18 +19,18 @@ class Trie:
         first = word[i]
         if first not in self.suffix_by_first:
             self.suffix_by_first[first] = Trie(first, self)
-        self.suffix_by_first[first].add(word, i+1)
+        self.suffix_by_first[first].add(word, i + 1)
 
     # @show
     def get_last(self, word, i=0):
-        """ returns the Trie (rooted at self) whose letter is word[-1] """
+        """returns the Trie (rooted at self) whose letter is word[-1]"""
         if i >= len(word):
             return self
         first = word[i]
 
         if first not in self.suffix_by_first:
             return
-        return self.suffix_by_first[first].get_last(word, i+1)
+        return self.suffix_by_first[first].get_last(word, i + 1)
 
     def __iter__(self):
         yield from self.suffix_by_first.values()
@@ -52,10 +53,10 @@ class Trie:
         first = word[i]
         if first not in self.suffix_by_first:
             return False
-        return self.suffix_by_first[first]._contains(word, i+1)
+        return self.suffix_by_first[first]._contains(word, i + 1)
 
     def get_word(self):
-        return ''.join(self._get_word())
+        return "".join(self._get_word())
 
     def _get_word(self):
         # TODO: avoid quadratic
@@ -89,7 +90,6 @@ def build_dictionary(words):
     for word in words:
         dictionary.add(word)
     return dictionary
-
 
 
 def get_neighbors(word, dictionary, max_dist=1):
@@ -128,10 +128,10 @@ def neighbor_generator(word, dictionary, max_dist=1, i=0):
         return
 
     ofirst = word[i]
-        # ofirst, suffix = next(word), word
-        # suffix = showiter(suffix)
+    # ofirst, suffix = next(word), word
+    # suffix = showiter(suffix)
     # except StopIteration:
-        # return
+    # return
 
     # # TODO:  avoid string slicing; use iter(word)?
     # suffix = word[1:]
@@ -143,7 +143,7 @@ def neighbor_generator(word, dictionary, max_dist=1, i=0):
             # if max_dist == 0:
             #     continue
             subproblem_max_dist -= 1
-        yield from neighbor_generator(word, child, subproblem_max_dist, i+1)
+        yield from neighbor_generator(word, child, subproblem_max_dist, i + 1)
 
 
 # @show
@@ -199,6 +199,7 @@ def test_build_dictionary():
     print("test_build_dictionary passes")
     print()
 
+
 def test_contains():
     d = build_dictionary(wordList)
 
@@ -225,7 +226,7 @@ def test_get_neighbors():
     d = build_dictionary(wordList)
     assert get_neighbors("hat", d) == ["hot"]
     assert get_neighbors("hot", d) == ["dot", "lot"]
-    assert set(get_neighbors('dot', d)) == {'hot', 'lot', 'dog'}
+    assert set(get_neighbors("dot", d)) == {"hot", "lot", "dog"}
     assert get_neighbors("xxx", d) == []
     assert get_neighbors("xx", d) == []
     assert get_neighbors("xxxx", d) == []
@@ -262,18 +263,18 @@ def test_leaf_generator():
     print()
 
 
-
 def test_get_last():
     d = build_dictionary(wordList)
-    hot_last = d.get_last('hot')
+    hot_last = d.get_last("hot")
     assert hot_last is d.suffix_by_first["h"].suffix_by_first["o"].suffix_by_first["t"]
-    assert hot_last.get_word() == 'hot'
-    h_ot_last = d.suffix_by_first['h'].get_last('ot')
+    assert hot_last.get_word() == "hot"
+    h_ot_last = d.suffix_by_first["h"].get_last("ot")
     assert h_ot_last is hot_last
-    assert d.get_last('at') is None
-    assert d.get_last('dot').get_word() == 'dot'
+    assert d.get_last("at") is None
+    assert d.get_last("dot").get_word() == "dot"
     print("test_get_last passes")
     print()
+
 
 def test_neighbor_generator():
     d = build_dictionary(wordList)
@@ -291,11 +292,12 @@ def test_neighbor_generator():
     print("test_neigbhor_generator passes")
     print()
 
+
 def test_neighbor_generator2():
     d = build_dictionary(wordList)
-    g = neighbor_generator('dot', d, 1)
+    g = neighbor_generator("dot", d, 1)
     neighbors = {n.get_word() for n in g}
-    assert neighbors == {'hot', 'lot', 'dog'}
+    assert neighbors == {"hot", "lot", "dog"}
     print("test_neigbhor_generator2 passes")
     print()
 
@@ -318,22 +320,22 @@ def test_bfs_generator():
 def test_ladder_length():
     length = ladder_length("hit", "cog", wordList)
     assert length == 5
-    print('test_ladder_length passes')
+    print("test_ladder_length passes")
+
 
 def test_large():
-    with open('./words_alpha.txt') as f:
+    with open("./words_alpha.txt") as f:
         words = map(lambda x: x.strip(), f.readlines())
     n = 6
     same_length_words = list(filter(lambda x: len(x) == n, words))
     import random
+
     a, b = random.choice(same_length_words), random.choice(same_length_words)
-    a,b='faunal', 'mainan'
+    a, b = "faunal", "mainan"
     # a,b='artar', 'oinks'
-    length=ladder_length(a, b, same_length_words)
+    length = ladder_length(a, b, same_length_words)
     assert length == 14
     # print(a, b, )
-
-
 
 
 wordList = ["hot", "dot", "dog", "lot", "log", "cog"]
@@ -348,4 +350,3 @@ test_neighbor_generator2()
 test_bfs_generator()
 test_ladder_length()
 test_large()
-

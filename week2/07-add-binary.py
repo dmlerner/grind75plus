@@ -1,9 +1,11 @@
 # https://leetcode.com/problems/add-binary/
 from itertools import zip_longest
 
+
 def reversed_int_generator(bitstring):
     for b in reversed(bitstring):
         yield int(b)
+
 
 def add_binary(a, b):
     carry = 0
@@ -17,7 +19,8 @@ def add_binary(a, b):
     if carry:
         sum_binary_reversed.append(carry)
 
-    return ''.join(map(str, reversed(sum_binary_reversed)))
+    return "".join(map(str, reversed(sum_binary_reversed)))
+
 
 def add_binary2(a, b):
     a = list(map(int, a))
@@ -54,6 +57,7 @@ def add_binary2(a, b):
     if carry:
         sum_binary_reversed.append(carry)
 
-    return ''.join(map(str, reversed(sum_binary_reversed)))
+    return "".join(map(str, reversed(sum_binary_reversed)))
 
-print(add_binary('11', '1'))
+
+print(add_binary("11", "1"))

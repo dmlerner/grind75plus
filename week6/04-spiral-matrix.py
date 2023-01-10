@@ -30,7 +30,7 @@ def to_spiral(mat):
             get_col(mat, C - 1 - i, 1 + i, R - i),  # right downward
             reversed(get_row(mat, R - 1 - i, i, C - 1 - i)),  # bottom leftward
             reversed(get_col(mat, i, 1 + i, R - 1 - i)),  # left upward
-            get_row(mat, 1 + i, 1 + i, C - 1 - i), # top rightwrad
+            get_row(mat, 1 + i, 1 + i, C - 1 - i),  # top rightwrad
         ]  # top rightward
         for l in layer:
             spiral.extend(l)
@@ -54,10 +54,10 @@ def to_spiral(mat):
 
 
 mat = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-mat = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+mat = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
 print("\n".join(map(str, mat)))
 expected = [1, 2, 3, 6, 9, 8, 7, 4, 5]
-expected = [1,2,3,4,8,12,11,10,9,5,6,7]
+expected = [1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
 print(f"{expected=}")
 actual = to_spiral(mat)
 print(f"{actual=}")

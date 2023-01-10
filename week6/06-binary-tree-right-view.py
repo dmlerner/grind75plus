@@ -13,4 +13,3 @@ def get_right_view(root):
                 next_level.append(l.right)
         last_level = next_level
         next_level = []
-

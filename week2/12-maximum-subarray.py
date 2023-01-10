@@ -1,6 +1,7 @@
 # https://leetcode.com/problems/maximum-subarray/
 from itertools import islice
 
+
 def max_subarray(nums):
     nums = iter(nums)
     best_sum = running_sum = next(nums)
@@ -9,4 +10,5 @@ def max_subarray(nums):
         best_sum = max(best_sum, running_sum)
     return best_sum
 
-print(max_subarray((1,2,3,4)))
+
+print(max_subarray((1, 2, 3, 4)))

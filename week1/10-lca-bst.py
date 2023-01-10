@@ -2,6 +2,7 @@
 from david import *
 from collections import defaultdict
 
+
 def find(root, val, ancestors):
     if root is None:
         return None
@@ -15,6 +16,7 @@ def find(root, val, ancestors):
         return None
     ancestors[val].add(found)
 
+
 # @show
 def get_path(root, val):
     yield root
@@ -24,6 +26,7 @@ def get_path(root, val):
 
     next_root = root.left if val < root.val else root.right
     yield from get_path(next_root, val)
+
 
 # @show
 def get_lca(root, p, q):
@@ -36,13 +39,14 @@ def get_lca(root, p, q):
         lca = p_anc
     return lca
 
-root = [6,2,8,0,4,7,9,None,None,3,5]
-root=[6,2,8,0,4,7,9,None,None,3,5]
-p=2
-q=4
+
+root = [6, 2, 8, 0, 4, 7, 9, None, None, 3, 5]
+root = [6, 2, 8, 0, 4, 7, 9, None, None, 3, 5]
+p = 2
+q = 4
 # root = [2, 1]
 t = TreeNode.to_tree(root)
-print(f'{t=}')
+print(f"{t=}")
 # breakpoint()
 lca = get_lca(t, p, q)
-print(f'{lca=}')
+print(f"{lca=}")

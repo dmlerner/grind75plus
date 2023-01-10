@@ -87,7 +87,7 @@ def three_sum(nums):
 
 
 nums = [-1, 0, 1, 2, -1, -4]
-nums = [0,0,0]
+nums = [0, 0, 0]
 # breakpoint()
 # for i in distinct_sorted_iterator(nums, True):
 #     # 1/0

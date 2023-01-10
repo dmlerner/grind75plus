@@ -3,14 +3,24 @@
 
 import operator
 
+
 def is_operator(t):
-    return t in '+-/*'
+    return t in "+-/*"
+
 
 def get_operator(t):
-    op = {'+': operator.add, '-': operator.sub, '/': lambda a,b: int(a/b), '*':operator.mul}[t]
+    op = {
+        "+": operator.add,
+        "-": operator.sub,
+        "/": lambda a, b: int(a / b),
+        "*": operator.mul,
+    }[t]
+
     def _operator(a, b):
         return op(int(a), int(b))
+
     return _operator
+
 
 def eval_rpn(tokens):
     stack = []
@@ -23,5 +33,6 @@ def eval_rpn(tokens):
             stack.append(t)
     return stack[-1]
 
-tokens = ["10","6","9","3","+","-11","*","/","*","17","+","5","+"]
+
+tokens = ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"]
 print(eval_rpn(tokens))

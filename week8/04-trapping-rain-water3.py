@@ -7,6 +7,7 @@
 # let's try the vertical approach too.
 # eight thirty four: works
 
+
 def calculate_rain_horizontal(heights):
     rain = 0
     mq = []
@@ -29,6 +30,7 @@ def calculate_rain_horizontal(heights):
         mq.append(i)
     return rain
 
+
 def calculate_rain_vertical(heights):
     l = 0
     r = len(heights) - 1
@@ -36,7 +38,7 @@ def calculate_rain_vertical(heights):
     rain = 0
     while l <= r:
         height = min(left_max, right_max)
-        #if heights[l] <= heights[r]:
+        # if heights[l] <= heights[r]:
         if left_max <= right_max:
             left_max = max(left_max, heights[l])
             location_to_fill = l
@@ -53,9 +55,6 @@ def calculate_rain_vertical(heights):
 
 
 #          0,1,2,3,4,5,6,7,8,9,0,1
-heights = [0,1,0,2,1,0,1,3,2,1,2,1]
+heights = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]
 rain = calculate_rain_vertical(heights)
 print(rain)
-
-
-

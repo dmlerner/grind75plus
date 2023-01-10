@@ -4,6 +4,7 @@
 
 from david import ListNode, show
 
+
 @show
 # Broken
 def _merge(a, b):
@@ -30,16 +31,17 @@ def _merge(a, b):
 
 
 def merge(lists):
-    #verify_list_of_nodes(lists)
+    # verify_list_of_nodes(lists)
     if len(lists) <= 1:
         return lists
     if len(lists) == 2:
         return [_merge_recursive(*lists)]
     left_merged = merge(lists[: len(lists) // 2])
-    #verify_list_of_nodes(left_merged)
+    # verify_list_of_nodes(left_merged)
     right_merged = merge(lists[len(lists) // 2 :])
-    #verify_list_of_nodes(right_merged)
+    # verify_list_of_nodes(right_merged)
     return merge(left_merged + right_merged)
+
 
 def _merge_recursive(a, b):
     if not (a and b):
@@ -50,6 +52,7 @@ def _merge_recursive(a, b):
     tail_merge = _merge_recursive(a.next, b)
     a.next = tail_merge
     return a
+
 
 lists = list(map(ListNode.create, [[1, 4, 5], [1, 3, 4], [2, 6]]))
 print(lists)

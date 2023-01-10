@@ -84,7 +84,7 @@ for i in actual:
         print("unexpected")
         print(i)
         print()
-print(*expected, sep='\n')
+print(*expected, sep="\n")
 print()
-print(*actual, sep='\n')
+print(*actual, sep="\n")
 assert expected == actual

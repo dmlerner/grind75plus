@@ -11,13 +11,14 @@ def merge_all(intervals):
             merged.append(interval)
     return merged
 
+
 def overlaps(a, b):
     if a[0] > b[0]:
         return overlaps(b, a)
     return b[0] <= a[1]
 
+
 def merge(a, b):
     if a[0] > b[0]:
         return merge(b, a)
     return [a[0], max(a[1], b[1])]
-

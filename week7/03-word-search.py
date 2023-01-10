@@ -10,6 +10,7 @@
 # now above median speed
 # well that's silly
 
+
 def exists(grid, word):
     def in_bounds(ij):
         i, j = ij
@@ -35,7 +36,7 @@ def exists(grid, word):
             grid[i][j] = None
             if any(dfs(ni, nj, c) for (ni, nj) in get_neighbors(i, j)):
                 return True
-            grid[i][j] = word[c-1]
+            grid[i][j] = word[c - 1]
 
         return False
 
@@ -47,14 +48,16 @@ def exists(grid, word):
 
     return any(dfs(i, j, 0) for i in range(len(grid)) for j in range(len(grid[0])))
 
+
 from collections import Counter
+
+
 def count_letters(grid):
     c = Counter()
     for row in grid:
         for letter in row:
             c[letter] += 1
     return c
-
 
 
 grid = [

@@ -1,9 +1,13 @@
 from collections import deque
 
+
 def in_bounds(image, r, c):
     return 0 <= r < len(image) and 0 <= c < len(image[0])
 
-OFFSETS = ((0,1), (0, -1), (1, 0), (-1, 0))
+
+OFFSETS = ((0, 1), (0, -1), (1, 0), (-1, 0))
+
+
 def get_neighbors(image, r, c, color):
     for (dr, dc) in OFFSETS:
         nr, nc = neighbor = r + dr, c + dc
@@ -14,9 +18,12 @@ def get_neighbors(image, r, c, color):
             continue
         yield neighbor
 
+
 def bfs(start, get_neighbors):
     frontier = deque([start])
-    enqueued = {start} # TODO: could this start empty if I add after appending to queue?
+    enqueued = {
+        start
+    }  # TODO: could this start empty if I add after appending to queue?
     while frontier:
         active = frontier.popleft()
         yield active
@@ -44,6 +51,7 @@ def fill(image, sr, sc, target_color):
             enqueued.add((r, c))
     return image
 
+
 def bfs2(start, get_neighbors):
     frontier = deque([start])
     enqueued = set(start)
@@ -62,6 +70,7 @@ def bfs2(start, get_neighbors):
 
 def fill2(image, sr, sc, target_color):
     filter_color = image[sr][sc]
+
     def _get_neighbors(rc):
         return get_neighbors(image, *rc, filter_color)
 
@@ -69,11 +78,12 @@ def fill2(image, sr, sc, target_color):
         image[r][c] = target_color
     return image
 
-image = [[1,1,1],[1,1,0],[1,0,1]]
-print(f'{image=}')
+
+image = [[1, 1, 1], [1, 1, 0], [1, 0, 1]]
+print(f"{image=}")
 new_image = fill2(image, 1, 1, 2)
-print(f'{new_image=}')
-expected_new_image = [[2,2,2],[2,2,0],[2,0,1]]
-print(f'{expected_new_image=}')
+print(f"{new_image=}")
+expected_new_image = [[2, 2, 2], [2, 2, 0], [2, 0, 1]]
+print(f"{expected_new_image=}")
 assert new_image == expected_new_image
-print('tests pass')
+print("tests pass")

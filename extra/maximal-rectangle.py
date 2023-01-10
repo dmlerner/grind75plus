@@ -1,5 +1,6 @@
 # https://leetcode.com/problems/maximal-rectangle/
 
+
 def get_max_area(heights):
     heights.append(0)
     max_area = 0
@@ -23,19 +24,21 @@ def get_max_area(heights):
 
     return max_area
 
+
 def get_h(rectangle):
     R, C = len(rectangle), len(rectangle[0])
     h = [[0] * C for r in range(R)]
     for r in range(R):
         for c in range(C - 1, -1, -1):
-            if rectangle[r][c] == '1':
+            if rectangle[r][c] == "1":
                 h[r][c] = 1
                 try:
-                    h[r][c] += h[r][c+1]
+                    h[r][c] += h[r][c + 1]
                 except IndexError:
                     pass
 
     return h
+
 
 def max_all_ones(rectangle):
     max_area = 0
@@ -50,5 +53,11 @@ def max_all_ones(rectangle):
 
     return max_area
 
-rectangle = [["1","0","1","0","0"],["1","0","1","1","1"],["1","1","1","1","1"],["1","0","0","1","0"]]
+
+rectangle = [
+    ["1", "0", "1", "0", "0"],
+    ["1", "0", "1", "1", "1"],
+    ["1", "1", "1", "1", "1"],
+    ["1", "0", "0", "1", "0"],
+]
 print(max_all_ones(rectangle))

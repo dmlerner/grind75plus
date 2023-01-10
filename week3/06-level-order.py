@@ -1,5 +1,7 @@
 from david import TreeNode
+
 # https://leetcode.com/problems/binary-tree-level-order-traversal/
+
 
 def level_order(root):
     if not root:
@@ -18,6 +20,7 @@ def level_order(root):
         last_level = active_level
     return values
 
-t = TreeNode.create([3,9,20,None,None,15,7])
+
+t = TreeNode.create([3, 9, 20, None, None, 15, 7])
 print(t)
 print(level_order(t))

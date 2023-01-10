@@ -5,6 +5,7 @@ def get_lca(root, p, q):
     # tree, not bst
     parent_by_node = {}
     depth_by_node = {root: 0}
+
     def dfs(node):
         if p in parent_by_node and q in parent_by_node:
             return
@@ -24,7 +25,7 @@ def get_lca(root, p, q):
 
     dfs(root)
 
-    print(f'{depth_by_node=}')
+    print(f"{depth_by_node=}")
     shallow, deep = sorted((p, q), key=depth_by_node.get)
     shallow_ancestors = set(get_ancestors(shallow))
     for node in get_ancestors(deep):
@@ -32,10 +33,9 @@ def get_lca(root, p, q):
             return node
 
 
-
-
 from david import *
-t = TreeNode.create([3,5,1,6,2,0,8,None,None,7,4])
-p=t.left
-q=t.right
+
+t = TreeNode.create([3, 5, 1, 6, 2, 0, 8, None, None, 7, 4])
+p = t.left
+q = t.right
 print(get_lca(t, p, q))

@@ -1,5 +1,6 @@
 from david import ListNode, show
 
+
 def merge_simple(list1, list2):
     if not list1:
         return list2
@@ -13,7 +14,6 @@ def merge_simple(list1, list2):
         head = tail = list2
         list2 = list2.next
 
-
     while list1 and list2:
         if list1.val <= list2.val:
             tail.next = list1
@@ -25,6 +25,7 @@ def merge_simple(list1, list2):
             list2 = list2.next
     tail.next = list1 or list2
     return head
+
 
 def safe_sorted(lists):
     return list(
@@ -57,6 +58,7 @@ def merge(list1, list2):
 
     return head
 
+
 def merge_recursive(list1, list2, head=None, tail=None):
     lists = list(filter(bool, (list1, list2)))
     if len(lists) == 1:
@@ -73,6 +75,7 @@ def merge_recursive(list1, list2, head=None, tail=None):
         if tail:
             tail.next = min
         return merge_recursive(*lists, head, min)
+
 
 def merge_recursive_match(list1, list2, head=None, tail=None):
     lists = list(filter(bool, (list1, list2)))
@@ -92,6 +95,8 @@ def merge_recursive_match(list1, list2, head=None, tail=None):
             if tail:
                 tail.next = min
             return merge_recursive(*lists, head, min)
+
+
 # l1 = ListNode.create(1, 4, 6)
 # print(l1)
 # l2 = ListNode.create(2, 5, 7)
@@ -100,7 +105,7 @@ def merge_recursive_match(list1, list2, head=None, tail=None):
 # print(l3)
 
 
-l1 = ListNode.create(1,1.5)
+l1 = ListNode.create(1, 1.5)
 print(l1)
 l2 = ListNode.create(0, 2)
 print(l2)

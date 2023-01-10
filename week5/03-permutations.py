@@ -3,6 +3,7 @@
 # eleven twenty four
 from david import show
 
+
 def get_permutations(nums):
     n = len(nums)
     permutations = []
@@ -16,8 +17,10 @@ def get_permutations(nums):
             permutation[first_none_index] = index
             dfs(permutation, unused - {index})
             permutation[first_none_index] = None
-    dfs([None]*len(nums), set(range(n)))
+
+    dfs([None] * len(nums), set(range(n)))
     return permutations
+
 
 def get_permutations2(nums):
     n = len(nums)
@@ -30,9 +33,11 @@ def get_permutations2(nums):
         for j in range(n):
             if permutation[j] is None:
                 permutation[j] = i
-                dfs(permutation, i+1)
+                dfs(permutation, i + 1)
                 permutation[j] = None
-    dfs([None]*len(nums), 0)
+
+    dfs([None] * len(nums), 0)
     return permutations
+
 
 print(get_permutations2([9, 3, 7]))

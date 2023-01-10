@@ -2,6 +2,7 @@
 # three oh six
 # three thirty
 
+
 def show(colors, next_zero, active, next_two):
     out = []
     for i, c in enumerate(colors):
@@ -13,11 +14,12 @@ def show(colors, next_zero, active, next_two):
             o += "A"
         if i == next_two:
             o += "T"
-        o += f'({c})'
+        o += f"({c})"
         out.append(o)
-    max_len = 5#max(map(len, out))
-    out = [(' '*max_len + o)[-max_len:] for o in out]
-    print(', '.join(map(str, out)))
+    max_len = 5  # max(map(len, out))
+    out = [(" " * max_len + o)[-max_len:] for o in out]
+    print(", ".join(map(str, out)))
+
 
 def sort_colors(colors):
     def swap(i, j):
@@ -43,11 +45,12 @@ def sort_colors(colors):
         else:
             active += 1
 
+
 import random
+
 # random.seed(1234)
 colors = list(random.randint(0, 2) for i in range(7))
 # colors = [0,1,1,2,0,1,0]
 print(colors)
 sort_colors(colors)
 print(colors)
-

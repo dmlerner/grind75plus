@@ -5,6 +5,7 @@
 
 from collections import defaultdict, deque
 
+
 def get_mht_roots(n, edges):
     if n == 1:
         return [0]
@@ -13,7 +14,6 @@ def get_mht_roots(n, edges):
     for (n1, n2) in edges:
         neighbors_by_node[n1].add(n2)
         neighbors_by_node[n2].add(n1)
-
 
     frontier = None
     # print(frontier)
@@ -35,9 +35,11 @@ def get_mht_roots(n, edges):
         if len(neighbors_by_node[neighbor]) == 1:
             next_level.append(neighbor)
         del neighbors_by_node[active]
-n = 6
-edges = [[3,0],[3,1],[3,2],[3,4],[5,4]]
 
-n=2
-edges=[[0,1]]
+
+n = 6
+edges = [[3, 0], [3, 1], [3, 2], [3, 4], [5, 4]]
+
+n = 2
+edges = [[0, 1]]
 get_mht_roots(n, edges)

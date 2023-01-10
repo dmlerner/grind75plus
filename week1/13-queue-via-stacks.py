@@ -2,7 +2,6 @@ class MyQueue:
     def __init__(self):
         self.lifo = []
 
-
     def push(self, x):
         self.lifo.append(x)
 
@@ -12,7 +11,6 @@ class MyQueue:
         while x:
             reversed.append(x.pop())
         return reversed
-
 
     def pop(self):
         fifo = MyQueue.reverse(self.lifo)
@@ -25,7 +23,6 @@ class MyQueue:
         peeked = fifo[-1]
         self.lifo = MyQueue.reverse(fifo)
         return peeked
-
 
     def empty(self):
         return not bool(self.lifo)

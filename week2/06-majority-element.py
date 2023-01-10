@@ -18,6 +18,7 @@ def majority(nums):
 
     return a if a_count > b_count else b
 
+
 def majority2(nums):
     m = None
     count = 0
@@ -31,7 +32,5 @@ def majority2(nums):
             count -= 1
     return m
 
-print(majority2((3,2,3)))
 
-
-
+print(majority2((3, 2, 3)))

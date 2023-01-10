@@ -5,8 +5,9 @@
 
 from david import show
 
+
 def _reconstruct(preorder, inorder, pi, pj, ii, ij):
-    n = pj - pi #+ 1
+    n = pj - pi  # + 1
     if not n:
         return
 
@@ -29,12 +30,15 @@ def _reconstruct(preorder, inorder, pi, pj, ii, ij):
 
     return TreeNode(root_val, left, right)
 
+
 def reconstruct(preorder, inorder):
     return _reconstruct(preorder, inorder, 0, len(preorder), 0, len(inorder))
 
+
 from david import *
-p=1,2,3
-i=3,2,1
+
+p = 1, 2, 3
+i = 3, 2, 1
 # t = TreeNode.create((1,2,None,3))
 # print(t)
 # print(reconstruct((1,2,3),(3,2,1)))

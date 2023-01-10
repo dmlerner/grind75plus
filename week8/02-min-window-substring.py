@@ -18,7 +18,7 @@ def min_window_substring(s, t):
                     need.remove(s[j])
             j += 1
         while not need:
-            candidate_mws = s[max(0, i):j]
+            candidate_mws = s[max(0, i) : j]
             if mws is None or len(candidate_mws) < len(mws):
                 mws = candidate_mws
 
@@ -30,13 +30,11 @@ def min_window_substring(s, t):
     return mws
 
 
-
-s="ADOBECODEBANC"
-t="ABC"
+s = "ADOBECODEBANC"
+t = "ABC"
 # breakpoint()
 
-s="a"
-t="aa"
+s = "a"
+t = "aa"
 
 print(min_window_substring(s, t))
-

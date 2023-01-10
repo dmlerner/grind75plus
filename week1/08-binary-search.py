@@ -1,12 +1,13 @@
-#https://leetcode.com/problems/binary-search/
+# https://leetcode.com/problems/binary-search/
 def binary_search(values, target):
-    return _binary_search(values, target, 0, len(values)-1)
+    return _binary_search(values, target, 0, len(values) - 1)
+
 
 def _binary_search(values, target, lower_bound, upper_bound):
     if lower_bound > upper_bound:
         return -1
 
-    middle = (lower_bound+upper_bound)//2
+    middle = (lower_bound + upper_bound) // 2
     middle_value = values[middle]
     if target == middle_value:
         return middle

@@ -4,6 +4,7 @@
 # seven fourty seven this looks better
 # seven fourty nine passes (forgot the mq can end up not empty)
 
+
 def get_max_area(heights):
     heights.append(0)
     max_area = 0
@@ -28,6 +29,7 @@ def get_max_area(heights):
 
     return max_area
 
+
 #          0,1,2,3,4,5
-heights = [2,1,5,6,2,3]
+heights = [2, 1, 5, 6, 2, 3]
 assert get_max_area(heights) == 10

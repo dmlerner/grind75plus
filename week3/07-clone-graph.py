@@ -5,10 +5,13 @@
 import copy
 from david import *
 
+
 def clone(node):
     return copy.deepcopy(node)
 
+
 from collections import deque
+
 
 def clone2(node):
     if not node:
@@ -16,7 +19,7 @@ def clone2(node):
 
     copy_by_original = {node: Node(node.val)}
     seen_original_nodes = set()
-    frontier = deque([node]) # originals
+    frontier = deque([node])  # originals
 
     while frontier:
         active_original_node = frontier.popleft()
@@ -27,5 +30,7 @@ def clone2(node):
                 frontier.append(neighbor)
                 copy_by_original[neighbor] = Node(neighbor.val)
 
-            copy_by_original[active_original_node].neighbors.append(copy_by_original[neighbor])
+            copy_by_original[active_original_node].neighbors.append(
+                copy_by_original[neighbor]
+            )
     return copy_by_original[node]

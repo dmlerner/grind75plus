@@ -13,13 +13,13 @@ class LinkedListNode:
             self.next.prev = self.prev
         # no need to update self
 
+
 class LinkedList:
     def __init__(self):
-        self.head = LinkedListNode() # least recently used
-        self.tail = LinkedListNode() # most
+        self.head = LinkedListNode()  # least recently used
+        self.tail = LinkedListNode()  # most
         self.head.next = self.tail
         self.tail.prev = self.head
-
 
     def push(self, lln):
         last_non_tail_node = self.tail.prev
@@ -44,7 +44,6 @@ class LRUCache:
         self.pairs = {}
         self.use_order = LinkedList()
         self.use_node_by_key = {}
-
 
     def put(self, k, v):
         # if k == 3:
@@ -74,10 +73,11 @@ class LRUCache:
         del self.pairs[k]
         del self.use_node_by_key[k]
 
-actions = ["LRUCache","put","put","get","put","get","put","get","get","get"]
-args = [[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]]
+
+actions = ["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+args = [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
 lru = None
-for (action, arg)  in zip(actions, args):
+for (action, arg) in zip(actions, args):
     print(action, arg)
     if action == "LRUCache":
         lru = LRUCache(*arg)
@@ -87,6 +87,3 @@ for (action, arg)  in zip(actions, args):
         print(lru.get(*arg))
     print(lru.pairs)
     print()
-
-
-

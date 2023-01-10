@@ -4,12 +4,13 @@
 
 from collections import defaultdict
 
+
 def find(values, timestamp):
     ans = None
     low = 0
     high = len(values) - 1
     while low <= high:
-        middle_index = (low + high)//2
+        middle_index = (low + high) // 2
         middle_timestamp, middle_value = values[middle_index]
         if middle_timestamp == timestamp:
             return middle_value

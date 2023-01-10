@@ -7,6 +7,7 @@
 
 from collections import Counter
 
+
 class LetterCounter:
     def __init__(self, p):
         self.p_counts = Counter(p)
@@ -37,6 +38,7 @@ class LetterCounter:
         else:
             self.extra -= 1
 
+
 def find(s, p):
     # Given two strings s and p, return an array of all the start indices of p's anagrams in s.
     # You may return the answer in any order.
@@ -59,6 +61,7 @@ def find(s, p):
 
     return indices
 
-s = 'abab'
-p = 'ab'
+
+s = "abab"
+p = "ab"
 print(find(s, p))

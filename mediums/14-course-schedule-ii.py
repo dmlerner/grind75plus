@@ -40,8 +40,10 @@ def find_order(num_courses, prerequisites):
     heapq.heapify(heap)
 
     order = []
-
+    i = 0
     while heap and len(order) < num_courses:
+        i += 1
+        print(i, len(heap))#, heap)
         try:
             prereq = pop_min(heap, n_prereqs_by_course)
         except NoSuchOrderException:
@@ -59,3 +61,7 @@ def find_order(num_courses, prerequisites):
 
 
 pre = [[1, 0]]
+n = 100
+pre = [[i, j] for i in range(n) for j in range(i+1, n)]
+print(pre)
+find_order(n, pre)

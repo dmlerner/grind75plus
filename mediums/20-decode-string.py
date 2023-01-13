@@ -8,36 +8,34 @@ and also stop leetcoding for the night...
 8:40 ok I should stop just reading https://en.wikipedia.org/wiki/Left_recursion#:~:text=7%20External%20links-,Definition,itself%20as%20the%20leftmost%20symbol.
 9:00 passes and that's almost pretty!
 9:10 well that's gorgeous
+9:21 oh god it's so beautiful
 """
-
-DIGITS = set(map(str, range(10)))
-CHARACTERS = set("abcdefghijklmnopqrstuvwxyz")
 
 
 class Token:
     OPEN = "["
     CLOSE = "]"
-    LETTERS = "LETTERS"
-    REPEAT = "REPEAT"
+    DIGITS = set(map(str, range(10)))
+    CHARACTERS = set("abcdefghijklmnopqrstuvwxyz")
 
 
 def get_repeat_token(s, i):
-    assert s[i] in DIGITS
+    assert s[i] in Token.DIGITS
     digit = []
-    while i < len(s) and s[i] in DIGITS:
+    while i < len(s) and s[i] in Token.DIGITS:
         digit.append(s[i])
         i += 1
     digit = int("".join(digit))
-    return Token.REPEAT, digit, i
+    return Token.DIGITS, digit, i
 
 
 def get_letters_token(s, i):
-    assert s[i] in CHARACTERS
+    assert s[i] in Token.CHARACTERS
     letters = []
-    while i < len(s) and s[i] in CHARACTERS:
+    while i < len(s) and s[i] in Token.CHARACTERS:
         letters.append(s[i])
         i += 1
-    return Token.LETTERS, "".join(letters), i
+    return Token.CHARACTERS, "".join(letters), i
 
 
 def tokenize(s, i=0):
@@ -51,9 +49,9 @@ def tokenize(s, i=0):
         case Token.CLOSE:
             token_type, token = Token.CLOSE, None
             i += 1
-        case c if c in DIGITS:
+        case c if c in Token.DIGITS:
             token_type, token, i = get_repeat_token(s, i)
-        case c if c in CHARACTERS:
+        case c if c in Token.CHARACTERS:
             token_type, token, i = get_letters_token(s, i)
         case _:
             raise Exception
@@ -61,12 +59,14 @@ def tokenize(s, i=0):
     yield token_type, token
     yield from tokenize(s, i)
 
+
 def flatten(lists):
     for element in lists:
         if isinstance(element, list):
             yield from flatten(element)
         else:
             yield element
+
 
 def decode_from_tokens(s):
     multipliers = []
@@ -76,16 +76,15 @@ def decode_from_tokens(s):
             case Token.OPEN:
                 expressions.append([])
             case Token.CLOSE:
-                # expression = "".join(expressions.pop())
                 expression = expressions.pop()
                 multiplier = multipliers.pop()
                 multiplied_expression = multiplier * expression
                 expressions[-1].append(multiplied_expression)
-            case Token.LETTERS:
+            case Token.CHARACTERS:
                 expressions[-1].append(token)
-            case Token.REPEAT:
+            case Token.DIGITS:
                 multipliers.append(token)
-    return ''.join(flatten(expressions))
+    return "".join(flatten(expressions))
 
 
 s = "3[a]2[bc]"

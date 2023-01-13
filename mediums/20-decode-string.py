@@ -70,7 +70,8 @@ def decode_from_tokens(s):
             case Token.OPEN:
                 expressions.append([])
             case Token.CLOSE:
-                expression = "".join(expressions.pop())
+                # expression = "".join(expressions.pop())
+                expression = expressions.pop()
                 multiplier = multipliers.pop()
                 multiplied_expression = multiplier * expression
                 expressions[-1].append(multiplied_expression)

@@ -1,8 +1,9 @@
-'''
+"""
 https://leetcode.com/problems/swap-nodes-in-pairs/
 11:08
 11:13
-'''
+"""
+
 
 def swap_in_pairs(head):
     if head is None:
@@ -19,4 +20,3 @@ def swap_in_pairs(head):
     # a.next = d.c.e
     head.next = head_of_tail
     return ret
-

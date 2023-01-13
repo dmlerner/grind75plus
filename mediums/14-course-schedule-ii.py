@@ -16,7 +16,10 @@ def build_prereqs_by_course(prerequisites):
         prereqs_by_course[course].add(prereq)
     return prereqs_by_course
 
-class NoSuchOrderException(Exception): pass
+
+class NoSuchOrderException(Exception):
+    pass
+
 
 def pop_min(heap, n_prereqs_by_course):
     while heap:
@@ -34,7 +37,8 @@ def find_order(num_courses, prerequisites):
     courses_by_prereq = build_prereqs_by_course(map(reversed, prerequisites))
 
     n_prereqs_by_course = {
-        course: len(prereqs_by_course.get(course, set())) for course in range(num_courses)
+        course: len(prereqs_by_course.get(course, set()))
+        for course in range(num_courses)
     }
     heap = [(n, c) for (c, n) in n_prereqs_by_course.items()]
     heapq.heapify(heap)
@@ -43,7 +47,7 @@ def find_order(num_courses, prerequisites):
     i = 0
     while heap and len(order) < num_courses:
         i += 1
-        print(i, len(heap))#, heap)
+        print(i, len(heap))  # , heap)
         try:
             prereq = pop_min(heap, n_prereqs_by_course)
         except NoSuchOrderException:
@@ -62,6 +66,6 @@ def find_order(num_courses, prerequisites):
 
 pre = [[1, 0]]
 n = 100
-pre = [[i, j] for i in range(n) for j in range(i+1, n)]
+pre = [[i, j] for i in range(n) for j in range(i + 1, n)]
 print(pre)
 find_order(n, pre)

@@ -23,7 +23,9 @@ def find_order(num_courses, prerequisites):
     # }
 
     order = []
-    courses_without_prereqs = [course for course in range(num_courses) if not prereqs_by_course.get(course)]
+    courses_without_prereqs = [
+        course for course in range(num_courses) if not prereqs_by_course.get(course)
+    ]
     courses_without_prereqs_set = set(courses_without_prereqs)
 
     while courses_without_prereqs:

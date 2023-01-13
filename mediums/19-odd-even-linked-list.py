@@ -1,10 +1,11 @@
-'''
+"""
 https://leetcode.com/problems/odd-even-linked-list/
 7:35
 8:03 passes but butt ugly
-'''
+"""
 
 from david import *
+
 
 def odd_even(head, even=None, odd=None):
     if head is None or head.next is None:
@@ -20,25 +21,26 @@ def odd_even(head, even=None, odd=None):
     odd_even(head, even, odd)
     return head
 
+
 def odd_even(head):
     if head is None or head.next is None:
         return head
 
-# 0
+    # 0
     # even = head
     even_tail = head
     # 1
     odd = head.next
     odd_tail = head.next
 
-    '''
+    """
     happy path
         both even_tail.next and odd_tail.next are not None
     odd_tail.next truthy, even_tail.next none
         extend only even, then return
     both none
         return
-    '''
+    """
 
     # while even_tail.next or odd_tail.next:
     while True:
@@ -59,6 +61,7 @@ def odd_even(head):
 
     even_tail.next = odd
     return head
+
 
 l = ListNode.create(range(1, 9))
 l = ListNode.create(range(0, 5))

@@ -1,4 +1,4 @@
-'''
+"""
 https://leetcode.com/problems/path-sum-ii/
 11:14
 11:20 maybe done
@@ -11,7 +11,8 @@ To improve this,
 avoid repeatedly copying each child path
 by passing *down* the recursion
 the nodes in the current path.
-'''
+"""
+
 
 def get_all_paths(root, target_sum):
     if root is None:
@@ -27,6 +28,8 @@ def get_all_paths(root, target_sum):
         child_paths.append([root.val])
     return child_paths
 
+
 from david import *
-t=TreeNode.create([5,4,8,11,None,13,4,7,2,None,None,5,1])
+
+t = TreeNode.create([5, 4, 8, 11, None, 13, 4, 7, 2, None, None, 5, 1])
 print(get_all_paths(t, 22))

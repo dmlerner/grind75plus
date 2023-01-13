@@ -61,6 +61,12 @@ def tokenize(s, i=0):
     yield token_type, token
     yield from tokenize(s, i)
 
+def flatten(lists):
+    for element in lists:
+        if isinstance(element, list):
+            yield from flatten(element)
+        else:
+            yield element
 
 def decode_from_tokens(s):
     multipliers = []
@@ -79,7 +85,7 @@ def decode_from_tokens(s):
                 expressions[-1].append(token)
             case Token.REPEAT:
                 multipliers.append(token)
-    return "".join(expressions.pop())
+    return ''.join(flatten(expressions))
 
 
 s = "3[a]2[bc]"

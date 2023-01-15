@@ -1,3 +1,6 @@
+import pyclip
+
+
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
@@ -118,6 +121,23 @@ def show_locals(n=1):
 
 
 sl = show_locals
+
+
+def clean():
+    caller_frame = inspect.currentframe().f_back
+    caller_filename = inspect.getmodule(caller_frame).__file__
+    with open(caller_filename) as f:
+        lines = f.readlines()
+    cleaned = []
+    forbidden = "clean() print( sl() @show @listify david".split()
+    is_forbidden = lambda line: any(f in line for f in forbidden)
+    for line in lines:
+        if is_forbidden(line):
+            continue
+        cleaned.append(line)
+    cleaned = "".join(cleaned)
+    pyclip.copy(cleaned)
+    return cleaned
 
 
 def call_limit(n=10):

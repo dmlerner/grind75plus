@@ -298,6 +298,7 @@ expression = "1+2+3"
 expression = "1+2*3"
 expression = "1"
 expression = "1+1"
+expression = "1+2*3"
 t = build_tree(expression)
 print(t)
 print(t.children[0])

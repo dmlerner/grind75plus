@@ -129,7 +129,7 @@ def clean():
     with open(caller_filename) as f:
         lines = f.readlines()
     cleaned = []
-    forbidden = "clean() print( sl() @show @listify david".split()
+    forbidden = "clean() print( sl() @show @listify david assert".split()
     is_forbidden = lambda line: any(f in line for f in forbidden)
     for line in lines:
         if is_forbidden(line):

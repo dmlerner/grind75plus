@@ -102,7 +102,7 @@ class Symbol:
     def repr(self):
         cname = str(self.__class__)
         start = cname.index('.')+1
-        len = 2
+        len = 3
         cname = cname[start: start+len] + ' '
         return '{'+cname+str(self.value)+'}'
     def __repr__(self):
@@ -136,13 +136,18 @@ class Operator(Symbol):
         "-": operator.sub,
     }
 
+    def distribute(self):
+        assert self.value == '*'
+        assert len(self.children) == 2
+
+    @show
     def evaluate(self, operands):
         # TODO: support Variables
         assert all(isinstance(operand, Constant) for operand in operands)
         assert len(operands) == self.arity
         operand_values = (operand.get_value() for operand in operands)
         # TODO: support returning Variable
-        return Value(Operator.operator_by_operation[self.value](*operand_values))
+        return Constant(Operator.operator_by_operation[self.value](*operand_values))
 
     def priority(self):
         return Operator.priority_by_operation[self.value]
@@ -185,6 +190,10 @@ class TreeNode:
     children: list[TreeNode] = field(default_factory=list)
     root_id: int = None
 
+    def __getitem__(self, i):
+        if i < len(self.children):
+            return self.children[i]
+
     def __post_init__(self):
         assert self.symbol is None or isinstance(self.symbol, Symbol)
 
@@ -199,7 +208,7 @@ class TreeNode:
             return self
         if isinstance(self.symbol, Grouping):
             assert len(self.children) == 1
-            return self.children[0]
+            return self.children[0].get_simplified()
         if isinstance(self.symbol, Operator):
             simplified_children_symbols = [
                 child.get_simplified().symbol for child in self.children
@@ -211,6 +220,8 @@ class TreeNode:
         return f"T[{self.symbol}|({recursed})]"
 
     def simplify(self):
+        # unclear if this code was ever working, use get_simplified instead
+        assert False
         match self.token_type:
             case Token.OPEN:
                 pass
@@ -248,7 +259,7 @@ def build_tree(s):
         print(token_type, token)
         active = ancestors[-1]
         constructor = constructor_by_token_type.get(token_type)
-        node = TreeNode(constructor(token))
+        node = constructor and TreeNode(constructor(token))
         # TODO: Can I make priority replace the per token type logic?
         match token_type:
             case Token.OPEN:
@@ -269,12 +280,14 @@ def build_tree(s):
                 # it is the left operand
                 # if none,
                 operator = node
-                for i, ancestor in enumerate(ancestors):
-                    if ancestor.is_higher_priority_than(operator):
+                for i in range(len(ancestors)-1, -1, -1):
+                # for i, ancestor in enumerate(ancestors):
+                    ancestor = ancestors[i]
+                    if not ancestor.is_higher_priority_than(operator):
                         break
-                left_operand = ancestors[i - 1].children[-1]
-                assert ancestor is left_operand
-                ancestors[i - 1].children[-1] = operator
+                left_operand = ancestor.children[-1]
+                # assert ancestor is left_operand
+                ancestor.children[-1] = operator
                 operator.children.append(left_operand)
                 ancestors[-1] = operator
         sl()
@@ -293,16 +306,22 @@ def verify(actual, expected):
         sl()
         assert False
 
+def tryprint(*args):
+    try:
+        print(*args)
+    except:
+        print('tryprint null')
 
-expression = "1+2+3"
-expression = "1+2*3"
-expression = "1"
-expression = "1+1"
-expression = "1+2*3"
-t = build_tree(expression)
-print(t)
-print(t.children[0])
-print(t.children[0].children[0])
-print(t.children[0].children[1])
-print('.'*20)
-print("=", t.get_simplified().symbol.get_value())
+
+expressions = "1+2+3", "1+2*3", "1", "1+1", "2*(3+4)", "1+2*3+10*(10/2)", "2*(3)", '(2+1)',
+for expression in expressions:
+    t = build_tree(expression)
+    value = t.get_simplified().symbol.get_value()
+    verify(value, eval(expression))
+
+# print('.'*20)
+# print(f'{t=}')
+# print(f'{t[0]=}')
+# print(f'{t[0][0]=}')
+# print(f'{t[0][1]=}')
+# print('.'*20)
